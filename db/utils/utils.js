@@ -10,6 +10,13 @@ exports.formatDate = articleData => {
   });
 };
 
-exports.makeRefObj = list => {};
+exports.makeRefObj = articlesInfo => {
+  if (!articlesInfo.length) return {};
+  const articlesRefObj = {};
+  articlesInfo.forEach(article => {
+    articlesRefObj[article.title] = article.article_id;
+  });
+  return articlesRefObj;
+};
 
 exports.formatComments = (comments, articleRef) => {};

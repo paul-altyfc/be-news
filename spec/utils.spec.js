@@ -59,6 +59,26 @@ describe('formatDate', () => {
   });
 });
 
-describe('makeRefObj', () => {});
+describe('makeRefObj', () => {
+  it('creates a new object when passed an object', () => {
+    const input = [];
+    const actual = makeRefObj(input);
+    expect(actual).to.be.an('object');
+  });
+  it('returns a key value pair of title and article_id when passed an array containing a single title and article_id', () => {
+    const input = [{ article_id: 36, title: 'The vegan carnivore?' }];
+    const actual = makeRefObj(input);
+    expect(actual['The vegan carnivore?']).to.equal(36);
+  });
+  it('returns a key value pair of title and article_id when passed an array containing a multiple titles and article_ids', () => {
+    const input = [
+      { article_id: 36, title: 'The vegan carnivore?' },
+      { article_id: 33, title: 'Seafood substitutions are increasing' }
+    ];
+    const actual = makeRefObj(input);
+    expect(actual['The vegan carnivore?']).to.equal(36);
+    expect(actual['Seafood substitutions are increasing']).to.equal(33);
+  });
+});
 
 describe('formatComments', () => {});
