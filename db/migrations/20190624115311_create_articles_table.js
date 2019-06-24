@@ -6,16 +6,14 @@ exports.up = function(knex, Promise) {
       .primary()
       .notNullable();
     articlesTable.string('title').notNullable();
-    articlesTable.string('body').notNullable();
+    articlesTable.text('body').notNullable();
     articlesTable
       .integer('votes')
       .notNullable()
       .defaultTo(0);
     articlesTable.string('topic').references('topics.slug');
     articlesTable.string('author').references('users.username');
-    articlesTable
-      .timestamp('created_at', { useTz: false })
-      .defaultTo(knex.fn.now(6));
+    articlesTable.timestamp('created_at').defaultTo(knex.fn.now(6));
   });
 };
 
