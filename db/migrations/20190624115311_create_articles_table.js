@@ -13,7 +13,9 @@ exports.up = function(knex, Promise) {
       .defaultTo(0);
     articlesTable.string('topic').references('topics.slug');
     articlesTable.string('author').references('users.username');
-    articlesTable.timestamp('created_at').defaultTo(knex.fn.now());
+    articlesTable
+      .timestamp('created_at', { useTz: false })
+      .defaultTo(knex.fn.now(6));
   });
 };
 
