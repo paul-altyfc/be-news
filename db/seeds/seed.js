@@ -53,9 +53,8 @@ exports.seed = function(knex, Promise) {
             articleRef
           );
           console.log(formattedComments);
-          return knex('comments')
-            .insert(formattedComments)
-            .returning('*');
+          return knex('comments').insert(formattedComments);
+          //  .returning('*');
         });
     });
 };
