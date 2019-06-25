@@ -1,14 +1,14 @@
-const { selectArticleById } = require('../models/articles-model.js');
+const { selectArticles } = require('../models/articles-model.js');
 
-const sendArticleById = (req, res, next) => {
+const sendArticles = (req, res, next) => {
   // console.log(req.params);
   // res.status(200).send(console.log('users controller'));
-  selectArticleById(req.params)
-    .then(user => {
-      res.status(200).send({ article });
-      console.log({ article });
+  selectArticles()
+    .then(articles => {
+      res.status(200).send({ articles });
+      //  console.log({ articles });
     })
     .catch(next);
 };
 
-module.exports = { sendArticleById };
+module.exports = { sendArticles };

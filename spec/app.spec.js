@@ -72,27 +72,27 @@ describe('/', () => {
       });
     });
     // Article endpoint tests
-    describe('/articles', () => {
-      describe('/:article_id', () => {
-        it('GET status: 200, responds with a single article object', () => {
-          return request(app)
-            .get('/api/articles/1')
-            .expect(200)
-            .then(({ body }) => {
-              expect(body.article.article_id).to.equal(1);
-              expect(body.article).to.contain.keys(
-                'article_id',
-                'title',
-                'body',
-                'topic',
-                'created_at',
-                'votes',
-                'author'
-                // COMMENT COUNT
-              );
-            });
-        });
+    describe.only('/articles', () => {
+      it('GET status: 200, responds with a single article object', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0]).to.contain.keys(
+              'article_id',
+              'title',
+              'body',
+              'topic',
+              'created_at',
+              'votes',
+              'author',
+              'comment_count'
+            );
+          });
       });
+      // describe('/:article_id', () => {
+      // });
       // it('GET status: 404, responds with a message when an invalid username is passed', () => {
       //   return request(app)
       //     .get('/api/articles/notanid')

@@ -22,9 +22,6 @@ exports.seed = function(knex, Promise) {
         .returning('*');
       return Promise.all([topicsInsertions, usersInsertions])
         .then(([topicsInsertions, usersInsertions]) => {
-          //console.log(topicsInsertions, 'article');
-          //console.log(usersInsertions, 'users')
-          // console.log(articleData);
           const formattedArticles = formatDate(articleData);
           return knex('articles')
             .insert(formattedArticles)
@@ -52,9 +49,10 @@ exports.seed = function(knex, Promise) {
             commentDataWithDate,
             articleRef
           );
-          // console.log(formattedComments);
-          return knex('comments').insert(formattedComments);
-          //  .returning('*');
+          // console.log(formattedComments, 'in seed');
+          return knex('comments')
+            .insert(formattedComments)
+            .returning('*');
         });
     });
 };

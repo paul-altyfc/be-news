@@ -19,19 +19,18 @@ exports.makeRefObj = articlesInfo => {
 exports.formatComments = (comments, articleRef) => {
   if (!comments.length) return [];
   // console.log(articleRef);
-  const cloneComments = [...comments];
+  // console.log(comments);
 
-  // console.log(cloneComments, 'clone');
-
-  cloneComments.forEach(clonedComment => {
-    // rename the cretaed_by field to author
-    // console.log(clonedComment.created_by, 'created by');
-    clonedComment.author = clonedComment.created_by;
-    delete clonedComment.created_by;
-    if (articleRef)
-      clonedComment.article_id = articleRef[clonedComment.belongs_to];
-    delete clonedComment.belongs_to;
+  const transformedArr = comments.map(comment => {
+    const { created_by, belongs_to } = comment;
+    comment.author = created_by;
+    delete comment.created_by;
+    if (articleRef) {
+      comment.article_id = articleRef[belongs_to];
+      delete comment.belongs_to;
+    }
+    return comment;
   });
-  // console.log(cloneComments);
-  return cloneComments;
+  // console.log(transformedArr, 'in utils');
+  return transformedArr;
 };
