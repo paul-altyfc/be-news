@@ -23,6 +23,7 @@ describe('/', () => {
   });
 
   describe('/api', () => {
+    // Test topics endpoints
     describe('/topics', () => {
       it('GET status: 200, responds with an array of topics having the right properties', () => {
         return request(app)
@@ -42,6 +43,7 @@ describe('/', () => {
           });
       });
     });
+    // Users endpoint tests
     describe('/users', () => {
       describe('/:username', () => {
         it('GET status: 200, responds with a single user object', () => {
@@ -68,6 +70,39 @@ describe('/', () => {
             );
           });
       });
+    });
+    // Article endpoint tests
+    describe('/articles', () => {
+      describe('/:article_id', () => {
+        it('GET status: 200, responds with a single article object', () => {
+          return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.article.article_id).to.equal(1);
+              expect(body.article).to.contain.keys(
+                'article_id',
+                'title',
+                'body',
+                'topic',
+                'created_at',
+                'votes',
+                'author'
+                // COMMENT COUNT
+              );
+            });
+        });
+      });
+      // it('GET status: 404, responds with a message when an invalid username is passed', () => {
+      //   return request(app)
+      //     .get('/api/articles/notanid')
+      //     .expect(404)
+      //     .then(({ body }) => {
+      //       expect(body.msg).to.equal(
+      //         'Article not found with article_id notanid'
+      //       );
+      //     });
+      // });
     });
   });
 });
