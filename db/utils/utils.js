@@ -28,11 +28,10 @@ exports.formatComments = (comments, articleRef) => {
     // console.log(clonedComment.created_by, 'created by');
     clonedComment.author = clonedComment.created_by;
     delete clonedComment.created_by;
-    console.log(clonedComment.belongs_to, 'belongs_to');
     if (articleRef)
       clonedComment.article_id = articleRef[clonedComment.belongs_to];
     delete clonedComment.belongs_to;
   });
-  console.log(cloneComments);
+  // console.log(cloneComments);
   return cloneComments;
 };

@@ -52,7 +52,7 @@ exports.seed = function(knex, Promise) {
             commentDataWithDate,
             articleRef
           );
-          console.log(formattedComments);
+          // console.log(formattedComments);
           return knex('comments').insert(formattedComments);
           //  .returning('*');
         });

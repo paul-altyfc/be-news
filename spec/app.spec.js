@@ -11,11 +11,14 @@ describe('/', () => {
   after(() => {
     connection.destroy();
   });
+
+  beforeEach(() => connection.seed.run());
+
   describe('/api', () => {
     describe('/topics', () => {
       it('GET status: 200, responds with an array of topics having the right properties', () => {
         return request(app)
-          .get('/api/topics')
+          .get('/api/topics1')
           .expect(200)
           .then(({ body }) => {
             expect(body.topics).to.be.an('array');
