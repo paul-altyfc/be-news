@@ -81,4 +81,67 @@ describe('makeRefObj', () => {
   });
 });
 
-describe('formatComments', () => {});
+describe('formatComments', () => {
+  it('creates a empty array when passed with empty arrays', () => {
+    const commentsData = [];
+    const articleRef = {};
+    const actual = formatComments(commentsData, articleRef);
+    expect(actual).to.be.eql([]);
+  });
+  describe('when given an array of comments it will', () => {
+    it('rename created_by key to author when passed a single comment', () => {
+      const input = [
+        {
+          body:
+            'Maxime error necessitatibus voluptatibus labore aliquid. Animi a maiores quo aut quia libero repellendus aut delectus. Illo dolorem sit eos at molestias sed. Sint quibusdam harum eos quidem praesentium corporis. Ut dolor aut consectetur nisi deserunt.',
+          belongs_to: 'The vegan carnivore?',
+          created_by: 'jessjelly',
+          votes: 2,
+          created_at: '2016-09-17T04:17:48.059Z'
+        }
+      ];
+      const actual = formatComments(input)[0];
+      expect(actual.author).to.equal('jessjelly');
+    });
+    it('rename created_by key to author when passed multiple comments', () => {
+      const input = [
+        {
+          body:
+            'Maxime error necessitatibus voluptatibus labore aliquid. Animi a maiores quo aut quia libero repellendus aut delectus. Illo dolorem sit eos at molestias sed. Sint quibusdam harum eos quidem praesentium corporis. Ut dolor aut consectetur nisi deserunt.',
+          belongs_to: 'The vegan carnivore?',
+          created_by: 'jessjelly',
+          votes: 2,
+          created_at: '2016-09-17T04:17:48.059Z'
+        },
+        {
+          body:
+            'Delectus nostrum autem. Dolore est id veniam maxime aliquid omnis nam cupiditate consequatur. Eveniet similique et voluptatem voluptatem illo. Quam officiis aut molestias hic est omnis. Dolor enim dolores. Quo explicabo reprehenderit reprehenderit nostrum magni in.',
+          belongs_to:
+            'Which current Premier League manager was the best player?',
+          votes: -3,
+          created_at: '2016-08-08T04:34:11.218Z',
+          created_by: 'grumpy19'
+        }
+      ];
+      const actual = formatComments(input);
+      expect(actual[0].author).to.equal('jessjelly');
+      expect(actual[1].author).to.equal('grumpy19');
+    });
+
+    it('renames the belong_to field to article_id and assigns it the correct id value', () => {
+      const input = [
+        {
+          body:
+            'Maxime error necessitatibus voluptatibus labore aliquid. Animi a maiores quo aut quia libero repellendus aut delectus. Illo dolorem sit eos at molestias sed. Sint quibusdam harum eos quidem praesentium corporis. Ut dolor aut consectetur nisi deserunt.',
+          belongs_to: 'The vegan carnivore?',
+          created_by: 'jessjelly',
+          votes: 2,
+          created_at: '2016-09-17T04:17:48.059Z'
+        }
+      ];
+      const refTable = { 'The vegan carnivore?': 36 };
+      const actual = formatComments(input, refTable)[0];
+      expect(actual.article_id).to.equal(36);
+    });
+  });
+});

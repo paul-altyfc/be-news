@@ -43,9 +43,19 @@ exports.seed = function(knex, Promise) {
             */
 
           const articleRef = makeRefObj(articleRows);
-          console.log(articleRef);
-          const formattedComments = formatComments(commentData, articleRef);
-          return knex('comments').insert(formattedComments);
+          // console.log(articleRef);
+
+          // Format the date field within the comments data
+          const commentDataWithDate = formatDate(commentData);
+
+          const formattedComments = formatComments(
+            commentDataWithDate,
+            articleRef
+          );
+          console.log(formattedComments);
+          return knex('comments')
+            .insert(formattedComments)
+            .returning('*');
         });
     });
 };

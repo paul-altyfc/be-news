@@ -1,12 +1,9 @@
-exports.formatDate = articleData => {
-  // console.log(articleData);
-  // console.log(articleData[0].created_at);
-  return articleData.map(article => {
-    const { created_at } = article;
-    // console.log(created_at);
-    article.created_at = new Date(created_at);
-    // console.log(article);
-    return article;
+exports.formatDate = list => {
+  // console.log(list, 'format date');
+  return list.map(item => {
+    const { created_at } = item;
+    item.created_at = new Date(created_at);
+    return item;
   });
 };
 
@@ -19,4 +16,23 @@ exports.makeRefObj = articlesInfo => {
   return articlesRefObj;
 };
 
-exports.formatComments = (comments, articleRef) => {};
+exports.formatComments = (comments, articleRef) => {
+  if (!comments.length) return [];
+  // console.log(articleRef);
+  const cloneComments = [...comments];
+
+  // console.log(cloneComments, 'clone');
+
+  cloneComments.forEach(clonedComment => {
+    // rename the cretaed_by field to author
+    // console.log(clonedComment.created_by, 'created by');
+    clonedComment.author = clonedComment.created_by;
+    delete clonedComment.created_by;
+    console.log(clonedComment.belongs_to, 'belongs_to');
+    if (articleRef)
+      clonedComment.article_id = articleRef[clonedComment.belongs_to];
+    delete clonedComment.belongs_to;
+  });
+  console.log(cloneComments);
+  return cloneComments;
+};
