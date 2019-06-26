@@ -1,7 +1,9 @@
 const connection = require('../db/connection.js');
 
-const selectArticles = ({ article_id }) => {
+const selectArticles = ({ article_id }, { sort_by, order, author, topic }) => {
   // console.log('In Articles Model');
+
+  console.log({ sort_by }, { order }, { author }, { topic });
 
   return connection
     .select(
@@ -19,8 +21,10 @@ const selectArticles = ({ article_id }) => {
     .modify(queryBuilder => {
       if (article_id) {
         queryBuilder.where({ 'articles.article_id': article_id });
+        // .orWhere({ author }.orWhere({ topic }));
       }
     })
+    .orderBy(sort_by || 'created_at', order || 'desc')
     .groupBy('articles.article_id')
     .then(articles => {
       if (!articles.length) {

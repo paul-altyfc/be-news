@@ -99,25 +99,58 @@ describe('/', () => {
     });
     // Article endpoint tests
     describe('/articles - endpoint tests', () => {
-      // NEEDS COMPLETING
-      it('GET status: 200, responds with an article object', () => {
+      // Sort_by and Order tests
+      it('GET status: 200, responds with an array of articles', () => {
         return request(app)
           .get('/api/articles')
           .expect(200)
           .then(({ body }) => {
-            // expect(body.articles).to.be.an('array');
-            // expect(body.articles[0]).to.contain.keys(
-            //   'article_id',
-            //   'title',
-            //   'body',
-            //   'topic',
-            //   'created_at',
-            //   'votes',
-            //   'author',
-            //   'comment_count'
-            // );
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0]).to.contain.keys(
+              'article_id',
+              'title',
+              'body',
+              'topic',
+              'created_at',
+              'votes',
+              'author',
+              'comment_count'
+            );
           });
       });
+      it('GET status: 200, responds with an array of articles sorted by "created_at" in descending date order', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.descendingBy('created_at');
+          });
+      });
+      it('GET status 200: returns an array of articles sorted by "created_at" in the specified sort order', () => {
+        return request(app)
+          .get('/api/articles?order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.ascendingBy('created_at');
+          });
+      });
+      it('GET status 200: returns an array of articles sorted by the specified column in the default descending sort order', () => {
+        return request(app)
+          .get('/api/articles?sort_by=title')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.descendingBy('title');
+          });
+      });
+      it('GET status 200: returns an array of comments - sorted in the specified sort order for the specified column', () => {
+        return request(app)
+          .get('/api/articles?sort_by=title&&order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.ascendingBy('title');
+          });
+      });
+      // Invalid Methods test
       it('INVALID METHOD status: 405, in /api/articles', () => {
         const invalidMethods = ['patch', 'put', 'post', 'delete'];
         const methodsPromise = invalidMethods.map(method => {

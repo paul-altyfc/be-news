@@ -4,10 +4,10 @@ const {
 } = require('../models/articles-model.js');
 
 const sendArticles = (req, res, next) => {
-  selectArticles(req.params)
+  selectArticles(req.params, req.query)
     .then(articles => {
       res.status(200).send({ articles });
-      //  console.log({ articles });
+      console.log({ articles });
     })
     .catch(next);
 };
