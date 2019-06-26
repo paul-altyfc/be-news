@@ -21,10 +21,15 @@ const selectArticles = ({ article_id }) => {
         queryBuilder.where({ 'articles.article_id': article_id });
       }
     })
-    .groupBy('articles.article_id');
-  //.then(articles => {
-  console.log({ articles });
-  // });
+    .groupBy('articles.article_id')
+    .then(articles => {
+      if (!articles.length) {
+        return Promise.reject({
+          status: 404,
+          msg: `Article not found with article_id ${article_id}`
+        });
+      } else return articles;
+    });
 };
 
 module.exports = { selectArticles };

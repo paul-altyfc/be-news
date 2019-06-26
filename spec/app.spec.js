@@ -59,22 +59,22 @@ describe('/', () => {
               );
             });
         });
-      });
-      it('GET status: 404, responds with a message when an invalid username is passed', () => {
-        return request(app)
-          .get('/api/users/notausername')
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.equal(
-              'User not found with username notausername'
-            );
-          });
+        it('GET status: 404, responds with a message when an invalid username is passed', () => {
+          return request(app)
+            .get('/api/users/notausername')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal(
+                'User not found with username notausername'
+              );
+            });
+        });
       });
     });
     // Article endpoint tests
     describe('/articles', () => {
       // NEEDS COMPLETING
-      it('GET status: 200, responds with a single article object', () => {
+      it('GET status: 200, responds with an article object', () => {
         return request(app)
           .get('/api/articles')
           .expect(200)
@@ -111,17 +111,25 @@ describe('/', () => {
               );
             });
         });
+        it('GET status: 404, responds with a message when an invalid article_id is passed', () => {
+          return request(app)
+            .get('/api/articles/999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal(
+                'Article not found with article_id 999'
+              );
+            });
+        });
+        it('GET status: 400, responds with a message a non integer article_id is passed', () => {
+          return request(app)
+            .get('/api/articles/notanid')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Bad Request');
+            });
+        });
       });
-      // it('GET status: 404, responds with a message when an invalid username is passed', () => {
-      // return request(app)
-      //   .get('/api/articles/notanid')
-      //   .expect(404)
-      //   .then(({ body }) => {
-      //     expect(body.msg).to.equal(
-      //       'Article not found with article_id notanid'
-      //     );
-      //   });
-      // });
     });
   });
 });
