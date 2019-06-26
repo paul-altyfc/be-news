@@ -26,7 +26,7 @@ describe('/', () => {
 
   describe('/api', () => {
     // Test topics endpoints
-    describe('/topics', () => {
+    describe('/topics - endpoint tests', () => {
       it('GET status: 200, responds with an array of topics having the right properties', () => {
         return request(app)
           .get('/api/topics')
@@ -46,7 +46,7 @@ describe('/', () => {
       });
     });
     // Users endpoint tests
-    describe('/users', () => {
+    describe('/users - endpoint tests', () => {
       describe('/:username', () => {
         it('GET status: 200, responds with a single user object', () => {
           return request(app)
@@ -74,7 +74,7 @@ describe('/', () => {
       });
     });
     // Article endpoint tests
-    describe('/articles', () => {
+    describe('/articles - endpoint tests', () => {
       // NEEDS COMPLETING
       it('GET status: 200, responds with an article object', () => {
         return request(app)
@@ -218,7 +218,7 @@ describe('/', () => {
                 );
               });
           });
-          it.only('GET status 200: returns an array of comments sorted by the specified sort order by the specified column for specified article_id', () => {
+          it('GET status 200: returns an array of comments sorted by the specified sort order by the specified column for specified article_id', () => {
             return request(app)
               .get('/api/articles/1/comments?sort_by=author&&order=asc')
               .expect(200)
@@ -233,6 +233,32 @@ describe('/', () => {
                 );
               });
           });
+        });
+      });
+    });
+    // Comments endpoint tests
+    describe('/comments - endpoint tests', () => {
+      describe('/:comment_id', () => {
+        it('DELETE status: 204, removes the comment from the database', () => {
+          return request(app)
+            .delete('/api/comments/2')
+            .expect(204);
+        });
+        it('DELETE status: 404, attempting to delete a valid comment_id that does not exist on the database', () => {
+          return request(app)
+            .delete('/api/comments/999999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Comment with id 999999 not found');
+            });
+        });
+        it('DELETE status: 404, attempting to delete comment with an invalid id', () => {
+          return request(app)
+            .delete('/api/comments/not-an-id')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Bad Request');
+            });
         });
       });
     });

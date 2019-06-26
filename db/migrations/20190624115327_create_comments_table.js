@@ -5,8 +5,14 @@ exports.up = function(knex, Promise) {
       .increments('comment_id')
       .primary()
       .notNullable();
-    commentsTable.string('author').references('users.username');
-    commentsTable.integer('article_id').references('articles.article_id');
+    commentsTable
+      .string('author')
+      .references('users.username')
+      .onDelete('CASCADE');
+    commentsTable
+      .integer('article_id')
+      .references('articles.article_id')
+      .onDelete('CASCADE');
     commentsTable
       .integer('votes')
       .notNullable()

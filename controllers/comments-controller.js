@@ -1,11 +1,13 @@
 const {
   insertComment,
-  selectComments
+  selectComments,
+  deleteCommentById,
+  updateComment
 } = require('../models/comments-model.js');
 
 const addComment = (req, res, next) => {
   const { username, body } = req.body;
-  const { article_id } = req.params;
+  // const { article_id } = req.params;
   const commentToAdd = req.params;
   commentToAdd.body = body;
   commentToAdd.author = username;
@@ -29,4 +31,16 @@ const sendComments = (req, res, next) => {
     .catch(console.log);
 };
 
-module.exports = { addComment, sendComments };
+const removeComment = (req, res, next) => {
+  deleteCommentById(req.params)
+    .then(comment => {
+      if (comment >= 1) {
+        res.sendStatus(204);
+      }
+    })
+    .catch(next);
+};
+
+const changeComment = (req, res, next) => {};
+
+module.exports = { addComment, sendComments, removeComment, changeComment };

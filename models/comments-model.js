@@ -24,4 +24,26 @@ const selectComments = ({ article_id }, { sort_by, order }) => {
     });
 };
 
-module.exports = { insertComment, selectComments };
+const deleteCommentById = ({ comment_id }) => {
+  return connection
+    .delete()
+    .from('comments')
+    .where({ comment_id })
+    .then(delete_count => {
+      if (!delete_count) {
+        return Promise.reject({
+          status: 404,
+          msg: `Comment with id ${comment_id} not found`
+        });
+      }
+      return true;
+    });
+};
+const updateComment = () => {};
+
+module.exports = {
+  insertComment,
+  selectComments,
+  deleteCommentById,
+  updateComment
+};
