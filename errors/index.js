@@ -6,10 +6,11 @@ exports.handleCustomErrors = (err, req, res, next) => {
 exports.handlePsqlErrors = (err, req, res, next) => {
   // console.log(err);
   // SEE PHOTO 26/06/19
-  const psqlBadRequestCodes = ['22P02', '42702'];
+  const psqlBadRequestCodes = ['22P02', '42702', '23503'];
   if (psqlBadRequestCodes.includes(err.code)) {
     //res.status(400).send({ msg: err.message || 'Bad Request' });
     res.status(400).send({ msg: 'Bad Request' });
+    console.log(err.message, 'SQL Error Handler');
   } else next(err);
 };
 

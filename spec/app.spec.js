@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'test';
 const app = require('../app.js');
 const request = require('supertest');
 const chai = require('chai');
-// const chaiSorted = require('chai-sorted');
+const chaiSorted = require('chai-sorted');
 const { expect } = chai;
 const connection = require('../db/connection.js');
 
@@ -156,7 +156,7 @@ describe('/', () => {
               expect(body.article[0].votes).to.equal(90);
             });
         });
-        it('PATCH status: 400, reduces the vote property on a single article when passed an object with a non numeric value', () => {
+        it('PATCH status: 400, returns an error message when passed an object with a non numeric value', () => {
           return request(app)
             .patch('/api/articles/1')
             .send({ inc_votes: 'aa' })
@@ -168,7 +168,7 @@ describe('/', () => {
             });
         });
         describe('/:article_id/comments', () => {
-          it.only('POST status 201: adds a new comment to a single comment', () => {
+          it('POST status 201: adds a new comment to a single comment', () => {
             return request(app)
               .post('/api/articles/1/comments')
               .send({ username: 'butter_bridge', body: 'pauls test comment' })
@@ -176,6 +176,30 @@ describe('/', () => {
               .then(({ body }) => {
                 expect(body.comment.author).to.equal('butter_bridge');
                 expect(body.comment.body).to.equal('pauls test comment');
+              });
+          });
+          it('POST status 400: returned when invalid user is entered', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({ username: 'not-a-user', body: 'pauls test comment 2' })
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal('Bad Request');
+              });
+          });
+          it.only('GET status 200: returns an array of comments for each article', () => {
+            return request(app)
+              .get('/api/articles/1/comments')
+              .expect(200)
+              .then(({ body }) => {
+                //expect(body.comments[0].article_id).to.equal(1);
+                expect(body.comments[0]).to.contain.keys(
+                  'comment_id',
+                  'votes',
+                  'body',
+                  'created_at',
+                  'author'
+                );
               });
           });
         });

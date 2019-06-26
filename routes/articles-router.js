@@ -3,7 +3,10 @@ const {
   sendArticles,
   changeArticle
 } = require('../controllers/articles-controller.js');
-const { addComment } = require('../controllers/comments-controller.js');
+const {
+  addComment,
+  sendComments
+} = require('../controllers/comments-controller.js');
 
 console.log('Articles Router');
 
@@ -14,6 +17,9 @@ articlesRouter
   .get(sendArticles)
   .patch(changeArticle);
 
-articlesRouter.route('/:article_id/comments').post(addComment);
+articlesRouter
+  .route('/:article_id/comments')
+  .post(addComment)
+  .get(sendComments);
 
 module.exports = articlesRouter;

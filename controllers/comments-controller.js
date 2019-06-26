@@ -1,4 +1,7 @@
-const { insertComment } = require('../models/comments-model.js');
+const {
+  insertComment,
+  selectComments
+} = require('../models/comments-model.js');
 
 const addComment = (req, res, next) => {
   const { username, body } = req.body;
@@ -16,4 +19,13 @@ const addComment = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { addComment };
+const sendComments = (req, res, next) => {
+  selectComments(req.params)
+    .then(comments => {
+      console.log(comments);
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+module.exports = { addComment, sendComments };
