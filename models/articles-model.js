@@ -32,4 +32,11 @@ const selectArticles = ({ article_id }) => {
     });
 };
 
-module.exports = { selectArticles };
+const updateArticle = ({ inc_votes }, { article_id }) => {
+  return connection('articles')
+    .increment('votes', inc_votes)
+    .where({ 'articles.article_id': article_id })
+    .returning('*');
+};
+
+module.exports = { selectArticles, updateArticle };

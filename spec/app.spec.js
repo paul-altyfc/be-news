@@ -129,6 +129,42 @@ describe('/', () => {
               expect(body.msg).to.equal('Bad Request');
             });
         });
+        it('PATCH status: 200, does not change the vote property on a single article when passed an object with 0', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 0 })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.article[0].votes).to.equal(100);
+            });
+        });
+        it('PATCH status: 200, updates the votes property on a single article when passed an object with positive value', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 10 })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.article[0].votes).to.equal(110);
+            });
+        });
+        it.only('PATCH status: 200, reduces the vote property on a single article when passed an object with negative value', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: -10 })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.article[0].votes).to.equal(90);
+            });
+        });
+        // it.only('PATCH status: 400, reduces the vote property on a single article when passed an object with a non numeric value', () => {
+        //   return request(app)
+        //     .patch('/api/articles/1')
+        //     .send({ inc_votes: aa })
+        //     .expect(400)
+        //     .then(({ body }) => {
+        //       expect(body.article[0].votes).to.equal(90);
+        //     });
+        // });
       });
     });
   });

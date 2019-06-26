@@ -1,4 +1,7 @@
-const { selectArticles } = require('../models/articles-model.js');
+const {
+  selectArticles,
+  updateArticle
+} = require('../models/articles-model.js');
 
 const sendArticles = (req, res, next) => {
   selectArticles(req.params)
@@ -9,4 +12,15 @@ const sendArticles = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { sendArticles };
+const changeArticle = (req, res, next) => {
+  // console.log(req.body);
+  // console.log(req.params);
+  updateArticle(req.body, req.params)
+    .then(article => {
+      console.log(article);
+      res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+module.exports = { sendArticles, changeArticle };

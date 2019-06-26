@@ -6,6 +6,9 @@ const {
   handlePsqlErrors,
   handleServerErrors
 } = require('./errors/index.js');
+
+app.use(express.json());
+
 app.use('/api', apiRouter);
 
 app.all('/*', (req, res) => {
