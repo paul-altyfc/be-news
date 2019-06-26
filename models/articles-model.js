@@ -33,6 +33,12 @@ const selectArticles = ({ article_id }) => {
 };
 
 const updateArticle = ({ inc_votes }, { article_id }) => {
+  if (typeof inc_votes === 'string') {
+    return Promise.reject({
+      status: 400,
+      msg: `Unable to update votes with a value of ${inc_votes}`
+    });
+  }
   return connection('articles')
     .increment('votes', inc_votes)
     .where({ 'articles.article_id': article_id })

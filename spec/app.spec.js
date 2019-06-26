@@ -156,15 +156,17 @@ describe('/', () => {
               expect(body.article[0].votes).to.equal(90);
             });
         });
-        // it.only('PATCH status: 400, reduces the vote property on a single article when passed an object with a non numeric value', () => {
-        //   return request(app)
-        //     .patch('/api/articles/1')
-        //     .send({ inc_votes: aa })
-        //     .expect(400)
-        //     .then(({ body }) => {
-        //       expect(body.article[0].votes).to.equal(90);
-        //     });
-        // });
+        it.only('PATCH status: 400, reduces the vote property on a single article when passed an object with a non numeric value', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 'aa' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal(
+                'Unable to update votes with a value of aa'
+              );
+            });
+        });
       });
     });
   });
