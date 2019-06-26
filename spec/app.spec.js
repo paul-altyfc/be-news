@@ -72,7 +72,8 @@ describe('/', () => {
       });
     });
     // Article endpoint tests
-    describe.only('/articles', () => {
+    describe('/articles', () => {
+      // NEEDS COMPLETING
       it('GET status: 200, responds with a single article object', () => {
         return request(app)
           .get('/api/articles')
@@ -91,17 +92,36 @@ describe('/', () => {
             );
           });
       });
-      // describe('/:article_id', () => {
-      // });
+      describe('/articles/:article_id', () => {
+        it('GET status: 200, responds with a single article based on its article_id', () => {
+          return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then(({ body }) => {
+              console.log(body.article);
+              expect(body.article[0].article_id).to.equal(1);
+              expect(body.article[0]).to.contain.keys(
+                'article_id',
+                'title',
+                'body',
+                'topic',
+                'created_at',
+                'votes',
+                'author',
+                'comment_count'
+              );
+            });
+        });
+      });
       // it('GET status: 404, responds with a message when an invalid username is passed', () => {
-      //   return request(app)
-      //     .get('/api/articles/notanid')
-      //     .expect(404)
-      //     .then(({ body }) => {
-      //       expect(body.msg).to.equal(
-      //         'Article not found with article_id notanid'
-      //       );
-      //     });
+      // return request(app)
+      //   .get('/api/articles/notanid')
+      //   .expect(404)
+      //   .then(({ body }) => {
+      //     expect(body.msg).to.equal(
+      //       'Article not found with article_id notanid'
+      //     );
+      //   });
       // });
     });
   });
