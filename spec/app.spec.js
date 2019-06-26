@@ -194,7 +194,6 @@ describe('/', () => {
               .get('/api/articles/1/comments')
               .expect(200)
               .then(({ body }) => {
-                //expect(body.comments[0].article_id).to.equal(1);
                 expect(body.comments[0]).to.contain.keys(
                   'comment_id',
                   'votes',
@@ -219,12 +218,12 @@ describe('/', () => {
                 );
               });
           });
-          it('GET status 200: returns an array of comments sorted by in default descending order by the specified column for specified article_id', () => {
+          it.only('GET status 200: returns an array of comments sorted by the specified sort order by the specified column for specified article_id', () => {
             return request(app)
-              .get('/api/articles/1/comments?sort_by=author')
+              .get('/api/articles/1/comments?sort_by=author&&order=asc')
               .expect(200)
               .then(({ body }) => {
-                expect(body.comments).to.be.descendingBy('author');
+                expect(body.comments).to.be.sortedBy('author');
                 expect(body.comments[0]).to.contain.keys(
                   'comment_id',
                   'votes',

@@ -53,7 +53,7 @@ exports.seed = function(knex, Promise) {
           return knex('comments')
             .insert(formattedComments)
             .returning('*');
-        })
-        .then(console.log);
+        });
+      //.then(console.log);
     });
 };
