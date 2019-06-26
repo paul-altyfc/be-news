@@ -7,6 +7,8 @@ const chaiSorted = require('chai-sorted');
 const { expect } = chai;
 const connection = require('../db/connection.js');
 
+chai.use(chaiSorted);
+
 describe('/', () => {
   after(() => {
     connection.destroy();
@@ -187,12 +189,42 @@ describe('/', () => {
                 expect(body.msg).to.equal('Bad Request');
               });
           });
-          it.only('GET status 200: returns an array of comments for each article', () => {
+          it('GET status 200: returns an array of comments for specified article_id', () => {
             return request(app)
               .get('/api/articles/1/comments')
               .expect(200)
               .then(({ body }) => {
                 //expect(body.comments[0].article_id).to.equal(1);
+                expect(body.comments[0]).to.contain.keys(
+                  'comment_id',
+                  'votes',
+                  'body',
+                  'created_at',
+                  'author'
+                );
+              });
+          });
+          it('GET status 200: returns an array of comments sorted by in default descending order by the default "created_at" column for specified article_id', () => {
+            return request(app)
+              .get('/api/articles/1/comments')
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments).to.be.descendingBy('created_at');
+                expect(body.comments[0]).to.contain.keys(
+                  'comment_id',
+                  'votes',
+                  'body',
+                  'created_at',
+                  'author'
+                );
+              });
+          });
+          it('GET status 200: returns an array of comments sorted by in default descending order by the specified column for specified article_id', () => {
+            return request(app)
+              .get('/api/articles/1/comments?sort_by=author')
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments).to.be.descendingBy('author');
                 expect(body.comments[0]).to.contain.keys(
                   'comment_id',
                   'votes',

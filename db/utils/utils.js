@@ -22,14 +22,12 @@ exports.formatComments = (comments, articleRef) => {
   // console.log(comments);
 
   const transformedArr = comments.map(comment => {
-    const { created_by, belongs_to } = comment;
-    comment.author = created_by;
-    delete comment.created_by;
-    if (articleRef) {
-      comment.article_id = articleRef[belongs_to];
-      delete comment.belongs_to;
-    }
-    return comment;
+    const { created_by, belongs_to, ...restOfComment } = comment;
+    return {
+      author: created_by,
+      article_id: articleRef[belongs_to],
+      ...restOfComment
+    };
   });
   // console.log(transformedArr, 'in utils');
   return transformedArr;

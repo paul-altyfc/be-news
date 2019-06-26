@@ -20,12 +20,13 @@ const addComment = (req, res, next) => {
 };
 
 const sendComments = (req, res, next) => {
-  selectComments(req.params)
+  // console.log(req.query);
+  selectComments(req.params, req.query)
     .then(comments => {
       console.log(comments);
       res.status(200).send({ comments });
     })
-    .catch(next);
+    .catch(console.log);
 };
 
 module.exports = { addComment, sendComments };
