@@ -4,11 +4,14 @@ const {
   removeComment
 } = require('../controllers/comments-controller.js');
 
-console.log('Comments Router');
+const { sendMethodNotAllowed } = require('../errors/index.js');
+
+//console.log('Comments Router');
 
 commentsRouter
   .route('/:comment_id')
   .delete(removeComment)
-  .patch(changeComment);
+  .patch(changeComment)
+  .all(sendMethodNotAllowed);
 
 module.exports = commentsRouter;

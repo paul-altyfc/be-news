@@ -39,7 +39,18 @@ const deleteCommentById = ({ comment_id }) => {
       return true;
     });
 };
-const updateComment = () => {};
+const updateComment = ({ inc_votes }, { comment_id }) => {
+  if (typeof inc_votes === 'string') {
+    return Promise.reject({
+      status: 400,
+      msg: `Unable to update comment votes with a value of ${inc_votes}`
+    });
+  }
+  return connection('comments')
+    .increment('votes', inc_votes)
+    .where({ 'comments.comment_id': comment_id })
+    .returning('*');
+};
 
 module.exports = {
   insertComment,

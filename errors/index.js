@@ -17,3 +17,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 exports.handleServerErrors = (err, req, res, next) => {
   res.status(500).send({ msg: 'Internal Server Error' });
 };
+
+exports.sendMethodNotAllowed = (req, res) => {
+  res.status(405).send({ msg: 'Method not allowed' });
+};

@@ -25,7 +25,7 @@ const sendComments = (req, res, next) => {
   // console.log(req.query);
   selectComments(req.params, req.query)
     .then(comments => {
-      console.log(comments);
+      // console.log(comments);
       res.status(200).send({ comments });
     })
     .catch(console.log);
@@ -41,6 +41,12 @@ const removeComment = (req, res, next) => {
     .catch(next);
 };
 
-const changeComment = (req, res, next) => {};
+const changeComment = (req, res, next) => {
+  updateComment(req.body, req.params)
+    .then(comment => {
+      res.status(200).send({ comment });
+    })
+    .catch(next);
+};
 
 module.exports = { addComment, sendComments, removeComment, changeComment };

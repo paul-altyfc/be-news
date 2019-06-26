@@ -8,18 +8,25 @@ const {
   sendComments
 } = require('../controllers/comments-controller.js');
 
+const { sendMethodNotAllowed } = require('../errors/index.js');
+
 console.log('Articles Router');
 
-articlesRouter.route('/').get(sendArticles);
+articlesRouter
+  .route('/')
+  .get(sendArticles)
+  .all(sendMethodNotAllowed);
 
 articlesRouter
   .route('/:article_id')
   .get(sendArticles)
-  .patch(changeArticle);
+  .patch(changeArticle)
+  .all(sendMethodNotAllowed);
 
 articlesRouter
   .route('/:article_id/comments')
   .post(addComment)
-  .get(sendComments);
+  .get(sendComments)
+  .all(sendMethodNotAllowed);
 
 module.exports = articlesRouter;
