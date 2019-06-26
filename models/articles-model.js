@@ -17,7 +17,6 @@ const selectArticles = ({ article_id }) => {
     .from('articles')
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .modify(queryBuilder => {
-      console.log(article_id, 'in modify');
       if (article_id) {
         queryBuilder.where({ 'articles.article_id': article_id });
       }

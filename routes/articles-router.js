@@ -8,6 +8,6 @@ console.log('Articles Router');
 
 articlesRouter.route('/').get(sendArticles);
 
-articlesRouter.route('/:article_id').get(sendArticleById);
+articlesRouter.route('/:article_id').get(sendArticles);
 
 module.exports = articlesRouter;

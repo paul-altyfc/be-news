@@ -6,7 +6,7 @@ const sendUserById = (req, res, next) => {
   selectUserById(req.params)
     .then(user => {
       res.status(200).send({ user });
-      console.log({ user });
+      // console.log({ user });
     })
     .catch(next);
 };
