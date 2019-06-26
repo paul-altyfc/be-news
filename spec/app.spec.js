@@ -147,7 +147,7 @@ describe('/', () => {
               expect(body.article[0].votes).to.equal(110);
             });
         });
-        it.only('PATCH status: 200, reduces the vote property on a single article when passed an object with negative value', () => {
+        it('PATCH status: 200, reduces the vote property on a single article when passed an object with negative value', () => {
           return request(app)
             .patch('/api/articles/1')
             .send({ inc_votes: -10 })
@@ -156,7 +156,7 @@ describe('/', () => {
               expect(body.article[0].votes).to.equal(90);
             });
         });
-        it.only('PATCH status: 400, reduces the vote property on a single article when passed an object with a non numeric value', () => {
+        it('PATCH status: 400, reduces the vote property on a single article when passed an object with a non numeric value', () => {
           return request(app)
             .patch('/api/articles/1')
             .send({ inc_votes: 'aa' })
@@ -166,6 +166,18 @@ describe('/', () => {
                 'Unable to update votes with a value of aa'
               );
             });
+        });
+        describe('/:article_id/comments', () => {
+          it.only('POST status 201: adds a new comment to a single comment', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({ username: 'butter_bridge', body: 'pauls test comment' })
+              .expect(201)
+              .then(({ body }) => {
+                expect(body.comment.author).to.equal('butter_bridge');
+                expect(body.comment.body).to.equal('pauls test comment');
+              });
+          });
         });
       });
     });
