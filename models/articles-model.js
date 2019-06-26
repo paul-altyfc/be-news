@@ -3,7 +3,7 @@ const connection = require('../db/connection.js');
 const selectArticles = ({ article_id }, { sort_by, order, author, topic }) => {
   // console.log('In Articles Model');
 
-  console.log({ sort_by }, { order }, { author }, { topic });
+  console.log({ article_id }, { sort_by }, { order }, { author }, { topic });
 
   return connection
     .select(
@@ -21,12 +21,18 @@ const selectArticles = ({ article_id }, { sort_by, order, author, topic }) => {
     .modify(queryBuilder => {
       if (article_id) {
         queryBuilder.where({ 'articles.article_id': article_id });
-        // .orWhere({ author }.orWhere({ topic }));
+      }
+      if (author) {
+        queryBuilder.where({ 'articles.author': author });
+      }
+      if (topic) {
+        queryBuilder.where({ 'articles.topic': topic });
       }
     })
     .orderBy(sort_by || 'created_at', order || 'desc')
     .groupBy('articles.article_id')
     .then(articles => {
+      console.log(!articles.length);
       if (!articles.length) {
         return Promise.reject({
           status: 404,

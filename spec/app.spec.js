@@ -150,6 +150,33 @@ describe('/', () => {
             expect(body.articles).to.be.ascendingBy('title');
           });
       });
+      // Author filter
+      it('GET status 200: returns an array of articles filtered by the author', () => {
+        return request(app)
+          .get('/api/articles?author=butter_bridge')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles[0].author).to.be.equal('butter_bridge');
+            const areAuthorsSame = body.articles.every(
+              article => article.author === 'butter_bridge'
+            );
+            expect(areAuthorsSame).to.be.true;
+          });
+      });
+      // Topic filter
+      it('GET status 200: returns an array of articles filtered by the topic', () => {
+        return request(app)
+          .get('/api/articles?topic=mitch')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles[0].topic).to.be.equal('mitch');
+            const areAuthorsSame = body.articles.every(
+              article => article.topic === 'mitch'
+            );
+            expect(areAuthorsSame).to.be.true;
+          });
+      });
+
       // Invalid Methods test
       it('INVALID METHOD status: 405, in /api/articles', () => {
         const invalidMethods = ['patch', 'put', 'post', 'delete'];
@@ -183,7 +210,7 @@ describe('/', () => {
             );
           });
       });
-      it('GET status: 404, responds with a message when an invalid article_id is passed', () => {
+      it.only('GET status: 404, responds with a message when an invalid article_id is passed', () => {
         return request(app)
           .get('/api/articles/999')
           .expect(404)

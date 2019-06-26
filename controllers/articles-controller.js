@@ -7,9 +7,9 @@ const sendArticles = (req, res, next) => {
   selectArticles(req.params, req.query)
     .then(articles => {
       res.status(200).send({ articles });
-      console.log({ articles });
+      // console.log({ articles });
     })
-    .catch(next);
+    .catch(console.log);
 };
 
 const changeArticle = (req, res, next) => {
