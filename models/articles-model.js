@@ -2,7 +2,7 @@ const connection = require('../db/connection.js');
 
 const selectArticles = (
   { article_id },
-  { sort_by = 'created_at', order = 'desc', author, topic = null }
+  { sort_by = 'created_at', order = 'desc', author, topic }
 ) => {
   console.log({ article_id }, { sort_by }, { order }, { author }, { topic });
 
@@ -27,7 +27,6 @@ const selectArticles = (
       .leftJoin('comments', 'articles.article_id', 'comments.article_id')
       .modify(queryBuilder => {
         if (article_id) {
-          // queryBuilder.where({ 'articles.article_id': article_id });
           queryBuilder.where('articles.article_id', article_id);
         }
         if (author) {
@@ -52,17 +51,33 @@ const selectArticles = (
   }
 };
 
-const updateArticle = ({ inc_votes }, { article_id }) => {
-  if (typeof inc_votes === 'string') {
+const updateArticle = (votesToAdd, { article_id }) => {
+  const { inc_votes } = votesToAdd;
+  const numOfKeys = Object.keys(votesToAdd).length;
+
+  if (numOfKeys > 1) {
+    return Promise.reject({
+      status: 400,
+      msg: `The inc_votes value should be a single item. Multiple items were passed`
+    });
+  }
+
+  if (inc_votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: `No value passed to update votes`
+    });
+  } else if (typeof inc_votes === 'string') {
     return Promise.reject({
       status: 400,
       msg: `Unable to update votes with a value of ${inc_votes}`
     });
+  } else {
+    return connection('articles')
+      .increment('votes', inc_votes)
+      .where({ 'articles.article_id': article_id })
+      .returning('*');
   }
-  return connection('articles')
-    .increment('votes', inc_votes)
-    .where({ 'articles.article_id': article_id })
-    .returning('*');
 };
 
 module.exports = { selectArticles, updateArticle };

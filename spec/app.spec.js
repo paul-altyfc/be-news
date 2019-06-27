@@ -248,7 +248,6 @@ describe('/', () => {
             expect(body.msg).to.equal('Author not found');
           });
       });
-
       it('GET status: 404, responds when a topic that is not in the database is passed', () => {
         return request(app)
           .get('/api/articles?topic=not-in-db')
@@ -265,12 +264,7 @@ describe('/', () => {
             expect(body.msg).to.equal('Topic not found');
           });
       });
-
-      /*
-
-       NEED TO CONTINUE FROM HERE 
-
-      */
+      // Consider adding a test for both Author and Topic being sent
 
       // Invalid Methods test
       it('INVALID METHOD status: 405, in /api/articles', () => {
@@ -356,6 +350,26 @@ describe('/', () => {
           .then(({ body }) => {
             expect(body.msg).to.equal(
               'Unable to update votes with a value of aa'
+            );
+          });
+      });
+      it('PATCH status: 400, returns an error message when passed an empty object', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('No value passed to update votes');
+          });
+      });
+      it.only('PATCH status: 400, passed an object with multiple values', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 5, name: 'Paul' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'The inc_votes value should be a single item. Multiple items were passed'
             );
           });
       });
