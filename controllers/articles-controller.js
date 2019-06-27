@@ -46,11 +46,32 @@ const sendArticlesById = (req, res, next) => {
 };
 
 const changeArticle = (req, res, next) => {
-  updateArticle(req.body, req.params)
-    .then(article => {
-      res.status(200).send({ article });
-    })
-    .catch(next);
+  const reqArr = Object.keys(req.body);
+  const numOfKeys = reqArr.length;
+  const { inc_votes } = req.body;
+
+  if (numOfKeys > 1) {
+    return Promise.reject({
+      status: 400,
+      msg: `The inc_votes value should be a single item. Multiple items were passed`
+    }).catch(next);
+  } else if (inc_votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: `No value passed to update votes`
+    }).catch(next);
+  } else if (typeof inc_votes === 'string') {
+    return Promise.reject({
+      status: 400,
+      msg: `Unable to update votes with a value of ${inc_votes}`
+    }).catch(next);
+  } else {
+    updateArticle(req.body, req.params)
+      .then(article => {
+        res.status(200).send({ article });
+      })
+      .catch(next);
+  }
 };
 
 const checkExists = (value, table, column) => {

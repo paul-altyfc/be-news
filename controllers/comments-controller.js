@@ -53,11 +53,32 @@ const removeComment = (req, res, next) => {
 };
 
 const changeComment = (req, res, next) => {
-  updateComment(req.body, req.params)
-    .then(comment => {
-      res.status(200).send({ comment });
-    })
-    .catch(next);
+  const reqArr = Object.keys(req.body);
+  const numOfKeys = reqArr.length;
+  const { inc_votes } = req.body;
+
+  if (numOfKeys > 1) {
+    return Promise.reject({
+      status: 400,
+      msg: `The inc_votes value should be a single item. Multiple items were passed`
+    }).catch(next);
+  } else if (inc_votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: `No value passed to update votes`
+    }).catch(next);
+  } else if (typeof inc_votes === 'string') {
+    return Promise.reject({
+      status: 400,
+      msg: `Unable to update votes with a value of ${inc_votes}`
+    }).catch(next);
+  } else {
+    updateComment(req.body, req.params)
+      .then(comment => {
+        res.status(200).send({ comment });
+      })
+      .catch(next);
+  }
 };
 
 module.exports = { addComment, sendComments, removeComment, changeComment };

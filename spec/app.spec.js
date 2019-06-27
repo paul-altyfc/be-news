@@ -598,10 +598,31 @@ describe('/', () => {
             .expect(400)
             .then(({ body }) => {
               expect(body.msg).to.equal(
-                'Unable to update comment votes with a value of not-an-int'
+                'Unable to update votes with a value of not-an-int'
               );
             });
         });
+        it('PATCH status: 400, returns an error message when passed an empty object', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .send({})
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('No value passed to update votes');
+            });
+        });
+        it('PATCH status: 400, passed an object with multiple values', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: 5, name: 'Paul' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal(
+                'The inc_votes value should be a single item. Multiple items were passed'
+              );
+            });
+        });
+
         it('INVALID METHOD status: 405, in /api/comments/:comment_id', () => {
           const invalidMethods = ['get', 'put', 'post'];
           const methodsPromise = invalidMethods.map(method => {
