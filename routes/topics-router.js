@@ -2,7 +2,7 @@ const topicsRouter = require('express').Router();
 const { sendTopics } = require('../controllers/topics-controller.js');
 const { sendMethodNotAllowed } = require('../errors/index.js');
 
-console.log('Topics Router');
+// console.log('Topics Router');
 
 topicsRouter
   .route('/')
