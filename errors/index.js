@@ -1,12 +1,11 @@
 exports.handleCustomErrors = (err, req, res, next) => {
-  console.log('Here');
-  console.log(err);
+  // console.log(err);
+  // Handles Errors where the program has set error values
   if (err.status) res.status(err.status).send({ msg: err.msg });
   else next(err);
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  // console.log(err);
   // SEE PHOTO 26/06/19
   const psqlBadRequestCodes = ['22P02', '42702', '23503'];
   if (psqlBadRequestCodes.includes(err.code)) {

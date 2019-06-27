@@ -26,6 +26,15 @@ describe('/', () => {
 
   describe('/api', () => {
     // Test topics endpoints
+    it('GET status: 404, responds with Not Found when passed a route that does not exist ', () => {
+      return request(app)
+        .get('/not-a-route')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Not Found');
+        });
+    });
+
     describe('/topics - endpoint tests', () => {
       it('GET status: 200, responds with an array of topics having the right properties', () => {
         return request(app)
@@ -73,6 +82,14 @@ describe('/', () => {
               );
             });
         });
+        it('GET status: 404, responds with a message when an valid username is passed but no data is returned', () => {
+          return request(app)
+            .get('/api/users/999999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('User not found with username 999999');
+            });
+        });
         it('GET status: 404, responds with a message when an invalid username is passed', () => {
           return request(app)
             .get('/api/users/notausername')
@@ -81,6 +98,14 @@ describe('/', () => {
               expect(body.msg).to.equal(
                 'User not found with username notausername'
               );
+            });
+        });
+        it('GET status: 404, responds with Not Found when passed a route that does not exist ', () => {
+          return request(app)
+            .get('/api/users-not-a-route/1')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Not Found');
             });
         });
         it('INVALID METHOD status: 405, in /api/users/:username', () => {
@@ -176,7 +201,14 @@ describe('/', () => {
             expect(areAuthorsSame).to.be.true;
           });
       });
-
+      it('GET status: 404, responds with a message when an invalid route is passed', () => {
+        return request(app)
+          .get('/api/articles-not-a-route')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Not Found');
+          });
+      });
       // Invalid Methods test
       it('INVALID METHOD status: 405, in /api/articles', () => {
         const invalidMethods = ['patch', 'put', 'post', 'delete'];
