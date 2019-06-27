@@ -11,7 +11,7 @@ const {
 
 const { sendMethodNotAllowed } = require('../errors/index.js');
 
-console.log('Articles Router');
+// console.log('Articles Router');
 
 articlesRouter
   .route('/')

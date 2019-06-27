@@ -54,6 +54,5 @@ exports.seed = function(knex, Promise) {
             .insert(formattedComments)
             .returning('*');
         });
-      //.then(console.log);
     });
 };

@@ -6,14 +6,25 @@ const {
 } = require('../models/comments-model.js');
 
 const addComment = (req, res, next) => {
+  // check correct number of keys are present
   const { username, body } = req.body;
-  // const { article_id } = req.params;
+  // assign the article_id to a new object
   const commentToAdd = req.params;
+  // add the create the additional fields for insertion into the comments table
   commentToAdd.body = body;
   commentToAdd.author = username;
 
-  // console.log(commentToAdd, 'data to be added');
-
+  const reqArr = Object.keys(req.body);
+  const numOfKeys = reqArr.length;
+  if (
+    numOfKeys != 2 ||
+    (!reqArr.includes('username') || !reqArr.includes('body'))
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: `Only username and body area acceptable input values`
+    }).catch(next);
+  }
   insertComment(commentToAdd)
     .then(comment => {
       res.status(201).send({ comment });

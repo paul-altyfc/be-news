@@ -362,7 +362,7 @@ describe('/', () => {
             expect(body.msg).to.equal('No value passed to update votes');
           });
       });
-      it.only('PATCH status: 400, passed an object with multiple values', () => {
+      it('PATCH status: 400, passed an object with multiple values', () => {
         return request(app)
           .patch('/api/articles/1')
           .send({ inc_votes: 5, name: 'Paul' })
@@ -395,17 +395,6 @@ describe('/', () => {
           .then(({ body }) => {
             expect(body.comment.author).to.equal('butter_bridge');
             expect(body.comment.body).to.equal('pauls test comment');
-          });
-      });
-      it('POST status 400: returned when invalid user is entered', () => {
-        return request(app)
-          .post('/api/articles/1/comments')
-          .send({ username: 'not-a-user', body: 'pauls test comment 2' })
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).to.equal(
-              'Attempted to insert or update a field that is not present on the linked primary table'
-            );
           });
       });
       it('GET status 200: returns an array of comments for specified article_id', () => {
@@ -452,6 +441,92 @@ describe('/', () => {
             );
           });
       });
+      // Error Handling
+      it('POST status 400: returned when invalid username is entered', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({ username: 'not-a-user', body: 'pauls test comment 2' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Attempted to insert or update a field that is not present on the linked primary table'
+            );
+          });
+      });
+      it('GET status 400: returned when invalid article_id is entered', () => {
+        return request(app)
+          .post('/api/articles/not-an-int/comments')
+          .send({ username: 'mitch', body: 'pauls test comment 2' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Invalid value entered in URL');
+          });
+      });
+      it('GET status 400: returned when a valid article_id that is not on the database is entered', () => {
+        return request(app)
+          .post('/api/articles/999999/comments')
+          .send({ username: 'mitch', body: 'pauls test comment 2' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Attempted to insert or update a field that is not present on the linked primary table'
+            );
+          });
+      });
+      it('POST status 400: returned with additional fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({
+            username: 'butter_bridge',
+            body: 'pauls test comment 2',
+            invalidfield: 'Not valid'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Only username and body area acceptable input values'
+            );
+          });
+      });
+      it('POST status 400: returned with not enough fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({
+            body: 'pauls test comment 2'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Only username and body area acceptable input values'
+            );
+          });
+      });
+      it('POST status 400: returned with no values to be inserted', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Only username and body area acceptable input values'
+            );
+          });
+      });
+      it('POST status 400: returned with the correct number of fields but wrong keys', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({
+            user: 'butter_bridge',
+            body: 'pauls test comment 2'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Only username and body area acceptable input values'
+            );
+          });
+      });
+      // Method Error Handling
       it('INVALID METHOD status: 405, in /api/articles/:article_id/comments', () => {
         const invalidMethods = ['patch', 'put', 'delete'];
         const methodsPromise = invalidMethods.map(method => {
