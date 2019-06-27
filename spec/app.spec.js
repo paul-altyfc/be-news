@@ -230,6 +230,16 @@ describe('/', () => {
             expect(body.msg).to.equal('Invalid Column specified');
           });
       });
+      it('GET status: 400, responds when an invalid order value is passed', () => {
+        return request(app)
+          .get('/api/articles?order=not-an-order-value')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'order needs to be either asc or desc the value not-an-order-value is not valid'
+            );
+          });
+      });
 
       /*
 
