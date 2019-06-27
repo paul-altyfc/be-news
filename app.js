@@ -4,7 +4,8 @@ const apiRouter = require('./routes/api-router.js');
 const {
   handleCustomErrors,
   handlePsqlErrors,
-  handleServerErrors
+  handleServerErrors,
+  sendMethodNotAllowed
 } = require('./errors/index.js');
 
 app.use(express.json());

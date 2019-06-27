@@ -3,7 +3,7 @@ const connection = require('../db/connection.js');
 const selectArticles = ({ article_id }, { sort_by, order, author, topic }) => {
   // console.log('In Articles Model');
 
-  //  console.log({ article_id }, { sort_by }, { order }, { author }, { topic });
+  console.log({ article_id }, { sort_by }, { order }, { author }, { topic });
 
   return connection
     .select(

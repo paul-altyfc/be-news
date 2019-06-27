@@ -6,12 +6,17 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  // SEE PHOTO 26/06/19
-  const psqlBadRequestCodes = ['22P02', '42702', '23503'];
-  if (psqlBadRequestCodes.includes(err.code)) {
-    //res.status(400).send({ msg: err.message || 'Bad Request' });
-    res.status(400).send({ msg: 'Bad Request' });
-    console.log(err.message, 'SQL Error Handler');
+  console.log(err.code);
+  console.log(err.message);
+  const errorCodes = {
+    '42703': 'Invalid Column specified',
+    '22P02': 'Invalid value entered in URL',
+    '23503':
+      'Attempted to insert or update a field that is not present on the linked primary table'
+  };
+  if (errorCodes[err.code]) {
+    res.status(400).send({ msg: errorCodes[err.code] || 'Bad Request' });
+    console.log(err.message);
   } else next(err);
 };
 

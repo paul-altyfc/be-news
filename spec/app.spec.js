@@ -34,6 +34,18 @@ describe('/', () => {
           expect(body.msg).to.equal('Not Found');
         });
     });
+    it('INVALID METHOD status: 405, in /api', () => {
+      const invalidMethods = ['patch', 'put', 'post', 'delete'];
+      const methodsPromise = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api')
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Method not allowed');
+          });
+      });
+      return Promise.all(methodsPromise);
+    });
 
     describe('/topics - endpoint tests', () => {
       it('GET status: 200, responds with an array of topics having the right properties', () => {
@@ -201,6 +213,7 @@ describe('/', () => {
             expect(areAuthorsSame).to.be.true;
           });
       });
+      // ERROR HANDLING TESTS
       it('GET status: 404, responds with a message when an invalid route is passed', () => {
         return request(app)
           .get('/api/articles-not-a-route')
@@ -209,6 +222,21 @@ describe('/', () => {
             expect(body.msg).to.equal('Not Found');
           });
       });
+      it('GET status: 400, responds when an invalid sort_by column is passed', () => {
+        return request(app)
+          .get('/api/articles?sort_by=not-a-column')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Invalid Column specified');
+          });
+      });
+
+      /*
+
+       NEED TO CONTINUE FROM HERE 
+
+      */
+
       // Invalid Methods test
       it('INVALID METHOD status: 405, in /api/articles', () => {
         const invalidMethods = ['patch', 'put', 'post', 'delete'];
@@ -255,7 +283,7 @@ describe('/', () => {
           .get('/api/articles/notanid')
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('Bad Request');
+            expect(body.msg).to.equal('Invalid value entered in URL');
           });
       });
       it('PATCH status: 200, does not change the vote property on a single article when passed an object with 0', () => {
@@ -326,7 +354,9 @@ describe('/', () => {
           .send({ username: 'not-a-user', body: 'pauls test comment 2' })
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('Bad Request');
+            expect(body.msg).to.equal(
+              'Attempted to insert or update a field that is not present on the linked primary table'
+            );
           });
       });
       it('GET status 200: returns an array of comments for specified article_id', () => {
@@ -407,7 +437,7 @@ describe('/', () => {
             .delete('/api/comments/not-an-id')
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).to.equal('Bad Request');
+              expect(body.msg).to.equal('Invalid value entered in URL');
             });
         });
         it('PATCH status: 200, does not change the vote property on a single comment when passed an object with 0', () => {
