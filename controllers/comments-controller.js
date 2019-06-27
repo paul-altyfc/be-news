@@ -28,7 +28,7 @@ const sendComments = (req, res, next) => {
       // console.log(comments);
       res.status(200).send({ comments });
     })
-    .catch(console.log);
+    .catch(next);
 };
 
 const removeComment = (req, res, next) => {

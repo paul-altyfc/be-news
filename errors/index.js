@@ -15,7 +15,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
   };
   if (errorCodes[err.code]) {
     res.status(400).send({ msg: errorCodes[err.code] || 'Bad Request' });
-    console.log(err.message);
+    // console.log(err.message);
   } else next(err);
 };
 
