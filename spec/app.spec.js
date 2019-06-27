@@ -240,9 +240,26 @@ describe('/', () => {
             expect(body.msg).to.equal('Author not found');
           });
       });
+      it('GET status: 404, responds when no author is entered but the query parameter is present', () => {
+        return request(app)
+          .get('/api/articles?author=')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Author not found');
+          });
+      });
+
       it('GET status: 404, responds when a topic that is not in the database is passed', () => {
         return request(app)
           .get('/api/articles?topic=not-in-db')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Topic not found');
+          });
+      });
+      it('GET status: 404, responds when no topic is entered but the query parameter is present', () => {
+        return request(app)
+          .get('/api/articles?topic=')
           .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.equal('Topic not found');

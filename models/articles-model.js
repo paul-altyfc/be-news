@@ -2,7 +2,7 @@ const connection = require('../db/connection.js');
 
 const selectArticles = (
   { article_id },
-  { sort_by = 'created_at', order = 'desc', author, topic }
+  { sort_by = 'created_at', order = 'desc', author, topic = null }
 ) => {
   console.log({ article_id }, { sort_by }, { order }, { author }, { topic });
 
