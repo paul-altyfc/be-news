@@ -9,7 +9,7 @@ const sendArticles = (req, res, next) => {
       res.status(200).send({ articles });
       // console.log({ articles });
     })
-    .catch(console.log);
+    .catch(next);
 };
 
 const changeArticle = (req, res, next) => {

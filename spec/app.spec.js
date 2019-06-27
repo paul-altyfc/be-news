@@ -210,7 +210,7 @@ describe('/', () => {
             );
           });
       });
-      it.only('GET status: 404, responds with a message when an invalid article_id is passed', () => {
+      it('GET status: 404, responds with a message when an invalid article_id is passed', () => {
         return request(app)
           .get('/api/articles/999')
           .expect(404)
