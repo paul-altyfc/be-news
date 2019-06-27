@@ -13,12 +13,18 @@ const sendArticles = (req, res, next) => {
         ? checkExists(author, 'users', 'username')
         : null;
 
-      return Promise.all([authorExists, articles]);
+      const topicExists = topic
+        ? checkExists(topic, 'articles', 'topic')
+        : null;
+
+      return Promise.all([authorExists, topicExists, articles]);
     })
-    .then(([authorExists, articles]) => {
+    .then(([authorExists, topicExists, articles]) => {
       // console.log(authorExists, articles);
       if (authorExists === false) {
         return Promise.reject({ status: 404, msg: 'Author not found' });
+      } else if (topicExists === false) {
+        return Promise.reject({ status: 404, msg: 'Topic not found' });
       } else {
         res.status(200).send({ articles });
       }

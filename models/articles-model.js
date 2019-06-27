@@ -7,13 +7,11 @@ const selectArticles = (
   console.log({ article_id }, { sort_by }, { order }, { author }, { topic });
 
   if (order !== 'asc' && order !== 'desc') {
-    console.log('here');
     return Promise.reject({
       status: 400,
       msg: `order needs to be either asc or desc the value ${order} is not valid`
     });
   } else {
-    console.log({ article_id });
     return connection
       .select(
         'articles.article_id',
