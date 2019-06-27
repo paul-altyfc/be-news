@@ -1,3 +1,5 @@
+const { DB_URL } = process.env;
+
 const ENV = process.env.NODE_ENV || 'development';
 
 // console.log(ENV, 'environment');
@@ -26,6 +28,9 @@ const customConfig = {
       user: 'paul',
       password: 'altyfc'
     }
+  },
+  production: {
+    connection: `${DB_URL}?ssl=true`
   }
 };
 
