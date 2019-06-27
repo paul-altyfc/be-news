@@ -94,14 +94,6 @@ describe('/', () => {
               );
             });
         });
-        it('GET status: 404, responds with a message when an valid username is passed but no data is returned', () => {
-          return request(app)
-            .get('/api/users/999999')
-            .expect(404)
-            .then(({ body }) => {
-              expect(body.msg).to.equal('User not found with username 999999');
-            });
-        });
         it('GET status: 404, responds with a message when an invalid username is passed', () => {
           return request(app)
             .get('/api/users/notausername')
@@ -240,6 +232,14 @@ describe('/', () => {
             );
           });
       });
+      it('GET status: 404, responds when an author that is not in the database is passed', () => {
+        return request(app)
+          .get('/api/articles?author=not-in-db')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Author not found');
+          });
+      });
 
       /*
 
@@ -267,8 +267,8 @@ describe('/', () => {
           .get('/api/articles/1')
           .expect(200)
           .then(({ body }) => {
-            expect(body.articles[0].article_id).to.equal(1);
-            expect(body.articles[0]).to.contain.keys(
+            expect(body.article[0].article_id).to.equal(1);
+            expect(body.article[0]).to.contain.keys(
               'article_id',
               'title',
               'body',
@@ -285,7 +285,7 @@ describe('/', () => {
           .get('/api/articles/999')
           .expect(404)
           .then(({ body }) => {
-            expect(body.msg).to.equal('Article not found with article_id 999');
+            expect(body.msg).to.equal('No articles with id 999 were found');
           });
       });
       it('GET status: 400, responds with a message a non integer article_id is passed', () => {

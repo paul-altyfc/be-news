@@ -1,17 +1,19 @@
 const connection = require('../db/connection.js');
 
-const selectArticles = ({ article_id }, { sort_by, order, author, topic }) => {
-  // console.log('In Articles Model');
-
+const selectArticles = (
+  { article_id },
+  { sort_by = 'created_at', order = 'desc', author, topic }
+) => {
   console.log({ article_id }, { sort_by }, { order }, { author }, { topic });
 
-  if (order !== 'asc' && order !== 'desc' && order !== undefined) {
+  if (order !== 'asc' && order !== 'desc') {
     console.log('here');
     return Promise.reject({
       status: 400,
       msg: `order needs to be either asc or desc the value ${order} is not valid`
     });
   } else {
+    console.log({ article_id });
     return connection
       .select(
         'articles.article_id',
@@ -27,7 +29,8 @@ const selectArticles = ({ article_id }, { sort_by, order, author, topic }) => {
       .leftJoin('comments', 'articles.article_id', 'comments.article_id')
       .modify(queryBuilder => {
         if (article_id) {
-          queryBuilder.where({ 'articles.article_id': article_id });
+          // queryBuilder.where({ 'articles.article_id': article_id });
+          queryBuilder.where('articles.article_id', article_id);
         }
         if (author) {
           queryBuilder.where({ 'articles.author': author });
@@ -36,17 +39,18 @@ const selectArticles = ({ article_id }, { sort_by, order, author, topic }) => {
           queryBuilder.where({ 'articles.topic': topic });
         }
       })
-      .orderBy(sort_by || 'created_at', order || 'desc')
+      .orderBy(sort_by, order)
       .groupBy('articles.article_id')
-      .then(articles => {
-        console.log(articles);
-        if (!articles.length) {
-          return Promise.reject({
-            status: 404,
-            msg: `Article not found with article_id ${article_id}`
-          });
-        } else return articles;
-      });
+      .then(articles => articles);
+    //{
+    // console.log(articles, 'In Model');
+    // if (!articles.length) {
+    //   return Promise.reject({
+    //     status: 404,
+    //     msg: `Article not found with article_id ${article_id}`
+    //   });
+    // } else return articles;
+    //});
   }
 };
 

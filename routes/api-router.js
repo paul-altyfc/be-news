@@ -5,7 +5,7 @@ const articlesRouter = require('./articles-router.js');
 const commentsRouter = require('./commentsRouter');
 const { sendMethodNotAllowed } = require('../errors/index.js');
 
-console.log('In API Router');
+// console.log('In API Router');
 apiRouter.use('/topics', topicsRouter);
 
 apiRouter.use('/users', usersRouter);

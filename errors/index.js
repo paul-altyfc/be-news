@@ -1,13 +1,12 @@
 exports.handleCustomErrors = (err, req, res, next) => {
-  // console.log(err);
   // Handles Errors where the program has set error values
   if (err.status) res.status(err.status).send({ msg: err.msg });
   else next(err);
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  console.log(err.code);
-  console.log(err.message);
+  // console.log(err.code);
+  // console.log(err.message);
   const errorCodes = {
     '42703': 'Invalid Column specified',
     '22P02': 'Invalid value entered in URL',
@@ -22,6 +21,10 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 
 exports.handleServerErrors = (err, req, res, next) => {
   res.status(500).send({ msg: 'Internal Server Error' });
+};
+
+exports.routeNotFound = (req, res) => {
+  res.status(404).send({ msg: 'Not Found' });
 };
 
 exports.sendMethodNotAllowed = (req, res) => {
