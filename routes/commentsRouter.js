@@ -6,8 +6,6 @@ const {
 
 const { sendMethodNotAllowed } = require('../errors/index.js');
 
-//console.log('Comments Router');
-
 commentsRouter
   .route('/:comment_id')
   .delete(removeComment)

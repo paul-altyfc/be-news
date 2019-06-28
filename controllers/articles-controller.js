@@ -9,7 +9,6 @@ const sendArticles = (req, res, next) => {
   const { author, topic } = req.query;
   selectArticles(req.params, req.query)
     .then(articles => {
-      // console.log(articles);
       const authorExists =
         author !== undefined ? checkExists(author, 'users', 'username') : null;
 
@@ -19,13 +18,11 @@ const sendArticles = (req, res, next) => {
       return Promise.all([authorExists, topicExists, articles]);
     })
     .then(([authorExists, topicExists, articles]) => {
-      // console.log(authorExists, topicExists, articles);
       if (authorExists === false) {
         return Promise.reject({ status: 404, msg: 'Author not found' });
       } else if (topicExists === false) {
         return Promise.reject({ status: 404, msg: 'Topic not found' });
       } else {
-        // console.log({});
         res.status(200).send({ articles });
       }
     })

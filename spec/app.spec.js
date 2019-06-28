@@ -471,6 +471,15 @@ describe('/', () => {
             expect(body.msg).to.equal('Invalid value entered in URL');
           });
       });
+      it('GET status 404: returned when valid article_id not in the database is entered', () => {
+        return request(app)
+          .get('/api/articles/999999/comments')
+          .send({ username: 'mitch', body: 'pauls test comment 2' })
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('No article with the id of 999999 found');
+          });
+      });
       it('POST status 422: returned when a valid article_id that is not on the database is entered', () => {
         return request(app)
           .post('/api/articles/999999/comments')
@@ -631,6 +640,16 @@ describe('/', () => {
               );
             });
         });
+        it('PATCH status: 404, responds with a message when an invalid comment_id is passed', () => {
+          return request(app)
+            .patch('/api/comments/999')
+            .send({ inc_votes: 50 })
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('No comments with id 999 were found');
+            });
+        });
+
         it('INVALID METHOD status: 405, in /api/comments/:comment_id', () => {
           const invalidMethods = ['get', 'put', 'post'];
           const methodsPromise = invalidMethods.map(method => {

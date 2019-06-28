@@ -38,14 +38,18 @@ const sendCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   selectComments(req.params, req.query)
     .then(comments => {
-      const commentsExist = article_id
-        ? checkExists(article_id, 'comments', 'article_id')
+      const articlesExist = article_id
+        ? checkExists(article_id, 'articles', 'article_id')
         : null;
 
-      return Promise.all([commentsExist, comments]);
+      return Promise.all([articlesExist, comments]);
     })
-    .then(([commentsExist, comments]) => {
-      if (commentsExist === false) {
+    .then(([articlesExist, comments]) => {
+      if (articlesExist === false) {
+        return Promise.reject({
+          status: 404,
+          msg: `No article with the id of ${article_id} found`
+        }).catch(next);
       }
       res.status(200).send({ comments });
     })
@@ -97,7 +101,15 @@ const changeComment = (req, res, next) => {
     updateComment(req.body, req.params)
       .then(commentArr => {
         comment = commentArr[0];
-        res.status(200).send({ comment });
+        if (comment === undefined) {
+          const { comment_id } = req.params;
+          return Promise.reject({
+            status: 404,
+            msg: `No comments with id ${comment_id} were found`
+          }).catch(next);
+        } else {
+          res.status(200).send({ comment });
+        }
       })
       .catch(next);
   }

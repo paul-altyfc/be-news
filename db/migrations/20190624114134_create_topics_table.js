@@ -1,5 +1,4 @@
 exports.up = function(knex, Promise) {
-  console.log('creating topic table...');
   return knex.schema.createTable('topics', topicsTable => {
     topicsTable
       .string('slug')
