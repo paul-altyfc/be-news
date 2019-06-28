@@ -25,6 +25,7 @@ const sendArticles = (req, res, next) => {
       } else if (topicExists === false) {
         return Promise.reject({ status: 404, msg: 'Topic not found' });
       } else {
+        // console.log({});
         res.status(200).send({ articles });
       }
     })
@@ -40,6 +41,7 @@ const sendArticlesById = (req, res, next) => {
           msg: `No articles with id ${article_id} were found`
         });
       }
+      article = article[0];
       res.status(200).send({ article });
     })
     .catch(next);
@@ -68,6 +70,7 @@ const changeArticle = (req, res, next) => {
   } else {
     updateArticle(req.body, req.params)
       .then(article => {
+        article = article[0];
         res.status(200).send({ article });
       })
       .catch(next);

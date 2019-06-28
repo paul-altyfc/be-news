@@ -6,7 +6,7 @@ const {
 } = require('../controllers/articles-controller.js');
 const {
   addComment,
-  sendComments
+  sendCommentsByArticleId
 } = require('../controllers/comments-controller.js');
 
 const { sendMethodNotAllowed } = require('../errors/index.js');
@@ -27,7 +27,7 @@ articlesRouter
 articlesRouter
   .route('/:article_id/comments')
   .post(addComment)
-  .get(sendComments)
+  .get(sendCommentsByArticleId)
   .all(sendMethodNotAllowed);
 
 module.exports = articlesRouter;

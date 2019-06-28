@@ -6,8 +6,6 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  // console.log(err.code);
-  // console.log(err.message);
   const errorCodes = {
     '42703': 'Invalid Column specified',
     '22P02': 'Invalid value entered in URL',
@@ -15,8 +13,11 @@ exports.handlePsqlErrors = (err, req, res, next) => {
       'Attempted to insert or update a field that is not present on the linked primary table'
   };
   if (errorCodes[err.code]) {
-    res.status(400).send({ msg: errorCodes[err.code] || 'Bad Request' });
-    // console.log(err.message);
+    if (err.code === '23503') {
+      res.status(422).send({ msg: errorCodes[err.code] });
+    } else {
+      res.status(400).send({ msg: errorCodes[err.code] || 'Bad Request' });
+    }
   } else next(err);
 };
 

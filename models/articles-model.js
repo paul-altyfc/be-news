@@ -39,15 +39,6 @@ const selectArticles = (
       .orderBy(sort_by, order)
       .groupBy('articles.article_id')
       .then(articles => articles);
-    //{
-    // console.log(articles, 'In Model');
-    // if (!articles.length) {
-    //   return Promise.reject({
-    //     status: 404,
-    //     msg: `Article not found with article_id ${article_id}`
-    //   });
-    // } else return articles;
-    //});
   }
 };
 

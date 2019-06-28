@@ -5,6 +5,8 @@ const {
   updateComment
 } = require('../models/comments-model.js');
 
+const connection = require('../db/connection.js');
+
 const addComment = (req, res, next) => {
   // check correct number of keys are present
   const { username, body } = req.body;
@@ -32,14 +34,33 @@ const addComment = (req, res, next) => {
     .catch(next);
 };
 
-const sendComments = (req, res, next) => {
-  // console.log(req.query);
+const sendCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
   selectComments(req.params, req.query)
     .then(comments => {
-      // console.log(comments);
+      const commentsExist = article_id
+        ? checkExists(article_id, 'comments', 'article_id')
+        : null;
+
+      return Promise.all([commentsExist, comments]);
+    })
+    .then(([commentsExist, comments]) => {
+      if (commentsExist === false) {
+      }
       res.status(200).send({ comments });
     })
     .catch(next);
+};
+
+const checkExists = (value, table, column) => {
+  return connection
+    .select('*')
+    .from(table)
+    .where(column, value)
+    .then(rows => {
+      if (rows.length === 0) return false;
+      return true;
+    });
 };
 
 const removeComment = (req, res, next) => {
@@ -74,11 +95,17 @@ const changeComment = (req, res, next) => {
     }).catch(next);
   } else {
     updateComment(req.body, req.params)
-      .then(comment => {
+      .then(commentArr => {
+        comment = commentArr[0];
         res.status(200).send({ comment });
       })
       .catch(next);
   }
 };
 
-module.exports = { addComment, sendComments, removeComment, changeComment };
+module.exports = {
+  addComment,
+  sendCommentsByArticleId,
+  removeComment,
+  changeComment
+};

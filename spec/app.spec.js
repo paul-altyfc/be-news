@@ -286,8 +286,8 @@ describe('/', () => {
           .get('/api/articles/1')
           .expect(200)
           .then(({ body }) => {
-            expect(body.article[0].article_id).to.equal(1);
-            expect(body.article[0]).to.contain.keys(
+            expect(body.article.article_id).to.equal(1);
+            expect(body.article).to.contain.keys(
               'article_id',
               'title',
               'body',
@@ -321,7 +321,7 @@ describe('/', () => {
           .send({ inc_votes: 0 })
           .expect(200)
           .then(({ body }) => {
-            expect(body.article[0].votes).to.equal(100);
+            expect(body.article.votes).to.equal(100);
           });
       });
       it('PATCH status: 200, updates the votes property on a single article when passed an object with positive value', () => {
@@ -330,7 +330,7 @@ describe('/', () => {
           .send({ inc_votes: 10 })
           .expect(200)
           .then(({ body }) => {
-            expect(body.article[0].votes).to.equal(110);
+            expect(body.article.votes).to.equal(110);
           });
       });
       it('PATCH status: 200, reduces the vote property on a single article when passed an object with negative value', () => {
@@ -339,7 +339,7 @@ describe('/', () => {
           .send({ inc_votes: -10 })
           .expect(200)
           .then(({ body }) => {
-            expect(body.article[0].votes).to.equal(90);
+            expect(body.article.votes).to.equal(90);
           });
       });
       it('PATCH status: 400, returns an error message when passed an object with a non numeric value', () => {
@@ -407,8 +407,17 @@ describe('/', () => {
               'votes',
               'body',
               'created_at',
-              'author'
+              'author',
+              'article_id'
             );
+          });
+      });
+      it('GET status 200: returns an array of empty comments for specified article_id', () => {
+        return request(app)
+          .get('/api/articles/2/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.eql([]);
           });
       });
       it('GET status 200: returns an array of comments sorted by in default descending order by the default "created_at" column for specified article_id', () => {
@@ -446,7 +455,7 @@ describe('/', () => {
         return request(app)
           .post('/api/articles/1/comments')
           .send({ username: 'not-a-user', body: 'pauls test comment 2' })
-          .expect(400)
+          .expect(422)
           .then(({ body }) => {
             expect(body.msg).to.equal(
               'Attempted to insert or update a field that is not present on the linked primary table'
@@ -462,11 +471,11 @@ describe('/', () => {
             expect(body.msg).to.equal('Invalid value entered in URL');
           });
       });
-      it('GET status 400: returned when a valid article_id that is not on the database is entered', () => {
+      it('POST status 422: returned when a valid article_id that is not on the database is entered', () => {
         return request(app)
           .post('/api/articles/999999/comments')
           .send({ username: 'mitch', body: 'pauls test comment 2' })
-          .expect(400)
+          .expect(422)
           .then(({ body }) => {
             expect(body.msg).to.equal(
               'Attempted to insert or update a field that is not present on the linked primary table'
@@ -570,7 +579,7 @@ describe('/', () => {
             .send({ inc_votes: 0 })
             .expect(200)
             .then(({ body }) => {
-              expect(body.comment[0].votes).to.equal(16);
+              expect(body.comment.votes).to.equal(16);
             });
         });
         it('PATCH status: 200, updates the votes property on a single comment when passed an object with positive value', () => {
@@ -579,7 +588,7 @@ describe('/', () => {
             .send({ inc_votes: 10 })
             .expect(200)
             .then(({ body }) => {
-              expect(body.comment[0].votes).to.equal(26);
+              expect(body.comment.votes).to.equal(26);
             });
         });
         it('PATCH status: 200, reduces the vote property on a single comment when passed an object with negative value', () => {
@@ -588,7 +597,7 @@ describe('/', () => {
             .send({ inc_votes: -10 })
             .expect(200)
             .then(({ body }) => {
-              expect(body.comment[0].votes).to.equal(6);
+              expect(body.comment.votes).to.equal(6);
             });
         });
         it('PATCH status: 400, returns an error message when passed an object with a non numeric value', () => {
@@ -622,7 +631,6 @@ describe('/', () => {
               );
             });
         });
-
         it('INVALID METHOD status: 405, in /api/comments/:comment_id', () => {
           const invalidMethods = ['get', 'put', 'post'];
           const methodsPromise = invalidMethods.map(method => {
