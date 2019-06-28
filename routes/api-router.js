@@ -18,7 +18,7 @@ apiRouter.use('/comments', commentsRouter);
 
 apiRouter
   .route('/')
-  .all(sendMethodNotAllowed)
-  .get(displayEndpointsJSON);
+  .get(displayEndpointsJSON)
+  .all(sendMethodNotAllowed);
 
 module.exports = apiRouter;

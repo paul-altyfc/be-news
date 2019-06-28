@@ -34,6 +34,14 @@ describe('/', () => {
           expect(body.msg).to.equal('Not Found');
         });
     });
+    it('GET status: 200, displays the endpoint.json file', () => {
+      return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.be.an('object');
+        });
+    });
     it('INVALID METHOD status: 405, in /api', () => {
       const invalidMethods = ['patch', 'put', 'post', 'delete'];
       const methodsPromise = invalidMethods.map(method => {
