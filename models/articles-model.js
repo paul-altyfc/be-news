@@ -2,8 +2,11 @@ const connection = require('../db/connection.js');
 
 const selectArticles = (
   { article_id },
-  { sort_by = 'created_at', order = 'desc', author, topic }
+  { sort_by = 'created_at', order = 'desc', author, topic, limit = 10, p }
 ) => {
+  if (isNaN(limit)) limit = 10;
+  if (isNaN(p)) p = 1;
+  const offset = (p - 1) * limit;
   if (order !== 'asc' && order !== 'desc') {
     return Promise.reject({
       status: 400,
@@ -36,6 +39,9 @@ const selectArticles = (
       })
       .orderBy(sort_by, order)
       .groupBy('articles.article_id')
+      .limit(limit)
+      .offset(offset)
+      .select(connection.raw('count(*) OVER() as total_count'))
       .then(articles => articles);
   }
 };

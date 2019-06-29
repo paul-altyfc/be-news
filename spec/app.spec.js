@@ -199,6 +199,22 @@ describe('/', () => {
             );
             expect(areAuthorsSame).to.be.true;
           });
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0]).to.contain.keys(
+              'article_id',
+              'title',
+              'body',
+              'topic',
+              'created_at',
+              'votes',
+              'author',
+              'comment_count'
+            );
+          });
       });
       // Topic filter
       it('GET status 200: returns an array of articles filtered by the topic', () => {
@@ -211,6 +227,71 @@ describe('/', () => {
               article => article.topic === 'mitch'
             );
             expect(areAuthorsSame).to.be.true;
+          });
+      });
+      // Limit and offset filters
+      it('GET status 200: responds with the first 10 articles when passed no limit query', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 2 articles when passed 2 as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles?limit=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(2);
+          });
+      });
+      it('GET status 200: responds with the default 10 articles when non-numeric value passed as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles?limit="a"')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 articles when passed no offset query', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+            expect(body.articles[0].article_id).to.equal(1);
+          });
+      });
+      it('GET status 200: responds with the articles when passed no offset query', () => {
+        return request(app)
+          .get('/api/articles?p=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0].article_id).to.equal(11);
+          });
+      });
+      it('GET status 200: responds with the articles when passed a limit and offset in the query', () => {
+        return request(app)
+          .get('/api/articles?limit=2&&p=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0].article_id).to.equal(3);
+          });
+      });
+      it.only('GET status 200: responds with the articles when passed a non numeric offset in the query', () => {
+        return request(app)
+          .get('/api/articles?p="a"')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0].article_id).to.equal(1);
           });
       });
       // ERROR HANDLING TESTS

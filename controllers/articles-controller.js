@@ -23,6 +23,7 @@ const sendArticles = (req, res, next) => {
       } else if (topicExists === false) {
         return Promise.reject({ status: 404, msg: 'Topic not found' });
       } else {
+        console.log(articles);
         res.status(200).send({ articles });
       }
     })
