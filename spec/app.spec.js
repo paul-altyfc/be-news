@@ -554,7 +554,8 @@ describe('/', () => {
               'body',
               'created_at',
               'author',
-              'article_id'
+              'article_id',
+              'total_count'
             );
           });
       });
@@ -577,7 +578,9 @@ describe('/', () => {
               'votes',
               'body',
               'created_at',
-              'author'
+              'author',
+              'article_id',
+              'total_count'
             );
           });
       });
@@ -592,10 +595,132 @@ describe('/', () => {
               'votes',
               'body',
               'created_at',
-              'author'
+              'author',
+              'article_id',
+              'total_count'
             );
           });
       });
+      // Limit and offset filters
+      it('GET status 200: responds with the first 10 comments when passed no limit query', () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 comments when passed null as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit=null')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 comments when passed no value as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit=')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 comments when passed undefined as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit=undefined')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 2 comments when passed 2 as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(2);
+          });
+      });
+      it('GET status 200: responds with the default 10 comments when non-numeric value passed as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit="a"')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 comments when passed no offset query', () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+            expect(body.comments[0].article_id).to.equal(1);
+          });
+      });
+      it('GET status 200: responds with the comments when passed a numeric offset query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?p=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments[0].comment_id).to.equal(12);
+          });
+      });
+      it('GET status 200: responds with the comments when passed a non numeric offset in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?p="a"')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments[0].comment_id).to.equal(2);
+          });
+      });
+      it('GET status 200: responds with the comments when passed a limit and offset in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit=2&&p=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments[0].comment_id).to.equal(4);
+          });
+      });
+      it('GET status 200: responds with the first 10 comments when passed null as the offset in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?p=null')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 comments when passed no value as the offset in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?p=')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 comments when passed undefined as the offset in the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?offset=undefined')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      // End of Limit and Offset tests
       // Error Handling
       it('POST status 400: returned when invalid username is entered', () => {
         return request(app)

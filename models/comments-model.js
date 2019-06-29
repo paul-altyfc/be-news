@@ -20,6 +20,7 @@ const selectComments = ({ article_id }, { sort_by, order, limit = 10, p }) => {
     .orderBy(sort_by || 'created_at', order || 'desc')
     .limit(limit)
     .offset(offset)
+    .select(connection.raw('count(*) OVER() as total_count'))
     .then(comments => comments);
 };
 
