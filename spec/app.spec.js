@@ -239,6 +239,33 @@ describe('/', () => {
             expect(body.articles.length).to.equal(10);
           });
       });
+      it('GET status 200: responds with the first 10 articles when passed null as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles?limit=null')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 articles when passed no value as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles?limit=')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 articles when passed undefined as the limit in the query', () => {
+        return request(app)
+          .get('/api/articles?limit=undefined')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+          });
+      });
       it('GET status 200: responds with the first 2 articles when passed 2 as the limit in the query', () => {
         return request(app)
           .get('/api/articles?limit=2')
@@ -248,6 +275,7 @@ describe('/', () => {
             expect(body.articles.length).to.equal(2);
           });
       });
+
       it('GET status 200: responds with the default 10 articles when non-numeric value passed as the limit in the query', () => {
         return request(app)
           .get('/api/articles?limit="a"')
@@ -276,6 +304,15 @@ describe('/', () => {
             expect(body.articles[0].article_id).to.equal(11);
           });
       });
+      it('GET status 200: responds with the articles when passed a non numeric offset in the query', () => {
+        return request(app)
+          .get('/api/articles?p="a"')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0].article_id).to.equal(1);
+          });
+      });
       it('GET status 200: responds with the articles when passed a limit and offset in the query', () => {
         return request(app)
           .get('/api/articles?limit=2&&p=2')
@@ -285,15 +322,34 @@ describe('/', () => {
             expect(body.articles[0].article_id).to.equal(3);
           });
       });
-      it.only('GET status 200: responds with the articles when passed a non numeric offset in the query', () => {
+      it('GET status 200: responds with the first 10 articles when passed null as the offset in the query', () => {
         return request(app)
-          .get('/api/articles?p="a"')
+          .get('/api/articles?p=null')
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles[0].article_id).to.equal(1);
+            expect(body.articles.length).to.equal(10);
           });
       });
+      it('GET status 200: responds with the first 10 articles when passed no value as the offset in the query', () => {
+        return request(app)
+          .get('/api/articles?p=')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+      it('GET status 200: responds with the first 10 articles when passed undefined as the offset in the query', () => {
+        return request(app)
+          .get('/api/articles?offset=undefined')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+
       // ERROR HANDLING TESTS
       it('GET status: 404, responds with a message when an invalid route is passed', () => {
         return request(app)
@@ -384,7 +440,8 @@ describe('/', () => {
               'created_at',
               'votes',
               'author',
-              'comment_count'
+              'comment_count',
+              'total_count'
             );
           });
       });
