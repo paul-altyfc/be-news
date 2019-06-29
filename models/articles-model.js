@@ -55,4 +55,20 @@ const updateArticle = (votesToAdd, { article_id }) => {
     .returning('*');
 };
 
-module.exports = { selectArticles, updateArticle };
+const deleteArticleById = ({ article_id }) => {
+  return connection
+    .delete()
+    .from('articles')
+    .where({ article_id })
+    .then(delete_count => {
+      if (!delete_count) {
+        return Promise.reject({
+          status: 404,
+          msg: `Article with id ${article_id} not found`
+        });
+      }
+      return true;
+    });
+};
+
+module.exports = { selectArticles, updateArticle, deleteArticleById };

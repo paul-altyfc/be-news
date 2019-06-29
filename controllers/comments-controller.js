@@ -24,7 +24,7 @@ const addComment = (req, res, next) => {
   ) {
     return Promise.reject({
       status: 400,
-      msg: `Only username and body area acceptable input values`
+      msg: `Only username and body are acceptable input values`
     }).catch(next);
   }
   insertComment(commentToAdd)

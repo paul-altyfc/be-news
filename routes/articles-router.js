@@ -2,7 +2,8 @@ const articlesRouter = require('express').Router();
 const {
   sendArticles,
   sendArticlesById,
-  changeArticle
+  changeArticle,
+  removeArticle
 } = require('../controllers/articles-controller.js');
 const {
   addComment,
@@ -20,6 +21,7 @@ articlesRouter
   .route('/:article_id')
   .get(sendArticlesById)
   .patch(changeArticle)
+  .delete(removeArticle)
   .all(sendMethodNotAllowed);
 
 articlesRouter

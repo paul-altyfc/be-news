@@ -1,6 +1,7 @@
 const {
   selectArticles,
-  updateArticle
+  updateArticle,
+  deleteArticleById
 } = require('../models/articles-model.js');
 
 const connection = require('../db/connection.js');
@@ -74,6 +75,16 @@ const changeArticle = (req, res, next) => {
   }
 };
 
+const removeArticle = (req, res, next) => {
+  deleteArticleById(req.params)
+    .then(article => {
+      if (article >= 1) {
+        res.sendStatus(204);
+      }
+    })
+    .catch(next);
+};
+
 const checkExists = (value, table, column) => {
   return connection
     .select('*')
@@ -84,4 +95,9 @@ const checkExists = (value, table, column) => {
     });
 };
 
-module.exports = { sendArticles, changeArticle, sendArticlesById };
+module.exports = {
+  sendArticles,
+  changeArticle,
+  sendArticlesById,
+  removeArticle
+};

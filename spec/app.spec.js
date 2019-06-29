@@ -55,6 +55,7 @@ describe('/', () => {
       return Promise.all(methodsPromise);
     });
 
+    // Topics enpoint tests
     describe('/topics - endpoint tests', () => {
       it('GET status: 200, responds with an array of topics having the right properties', () => {
         return request(app)
@@ -65,6 +66,74 @@ describe('/', () => {
             expect(body.topics[0]).to.contain.keys('slug', 'description');
           });
       });
+      it('POST status 201: adds a new topic', () => {
+        return request(app)
+          .post('/api/topics')
+          .send({ slug: 'anna', description: 'loves her cats suki and lucy' })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.topic.slug).to.equal('anna');
+            expect(body.topic.description).to.equal(
+              'loves her cats suki and lucy'
+            );
+          });
+      });
+      // Error Handling
+      it('POST status 400: returned with additional fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/topics')
+          .send({
+            slug: 'paul',
+            description: 'pauls test topic description',
+            invalidfield: 'Not valid'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Only slug and description are acceptable input values'
+            );
+          });
+      });
+      it('POST status 400: returned with not enough fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/topics')
+          .send({
+            description: 'pauls topics test description'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            console.log(body.msg);
+            expect(body.msg).to.equal(
+              'Only slug and description are acceptable input values'
+            );
+          });
+      });
+      it('POST status 400: returned with no values to be inserted', () => {
+        return request(app)
+          .post('/api/topics')
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Only slug and description are acceptable input values'
+            );
+          });
+      });
+      it('POST status 400: returned with the correct number of fields but wrong keys', () => {
+        return request(app)
+          .post('/api/topics')
+          .send({
+            user: 'butter_bridge',
+            body: 'pauls test comment 2'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Only slug and description are acceptable input values'
+            );
+          });
+      });
+
       it('GET status: 404, responds with Not Found when passed a route that does not exist ', () => {
         return request(app)
           .get('/api/topics999')
@@ -74,7 +143,7 @@ describe('/', () => {
           });
       });
       it('INVALID METHOD status: 405, in /api/topics', () => {
-        const invalidMethods = ['patch', 'put', 'post', 'delete'];
+        const invalidMethods = ['patch', 'put', 'delete'];
         const methodsPromise = invalidMethods.map(method => {
           return request(app)
             [method]('/api/topics')
@@ -275,7 +344,6 @@ describe('/', () => {
             expect(body.articles.length).to.equal(2);
           });
       });
-
       it('GET status 200: responds with the default 10 articles when non-numeric value passed as the limit in the query', () => {
         return request(app)
           .get('/api/articles?limit="a"')
@@ -350,7 +418,28 @@ describe('/', () => {
           });
       });
 
+      it('DELETE status: 204, removes the article from the database', () => {
+        return request(app)
+          .delete('/api/articles/5')
+          .expect(204);
+      });
       // ERROR HANDLING TESTS
+      it('DELETE status: 404, attempting to delete a valid article_id that does not exist on the database', () => {
+        return request(app)
+          .delete('/api/articles/999999')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Article with id 999999 not found');
+          });
+      });
+      it('DELETE status: 404, attempting to delete article with an invalid id', () => {
+        return request(app)
+          .delete('/api/articles/not-an-id')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Invalid value entered in URL');
+          });
+      });
       it('GET status: 404, responds with a message when an invalid route is passed', () => {
         return request(app)
           .get('/api/articles-not-a-route')
@@ -413,7 +502,7 @@ describe('/', () => {
 
       // Invalid Methods test
       it('INVALID METHOD status: 405, in /api/articles', () => {
-        const invalidMethods = ['patch', 'put', 'post', 'delete'];
+        const invalidMethods = ['patch', 'put', 'post'];
         const methodsPromise = invalidMethods.map(method => {
           return request(app)
             [method]('/api/articles')
@@ -722,17 +811,6 @@ describe('/', () => {
       });
       // End of Limit and Offset tests
       // Error Handling
-      it('POST status 400: returned when invalid username is entered', () => {
-        return request(app)
-          .post('/api/articles/1/comments')
-          .send({ username: 'not-a-user', body: 'pauls test comment 2' })
-          .expect(422)
-          .then(({ body }) => {
-            expect(body.msg).to.equal(
-              'Attempted to insert or update a field that is not present on the linked primary table'
-            );
-          });
-      });
       it('GET status 400: returned when invalid article_id is entered', () => {
         return request(app)
           .post('/api/articles/not-an-int/comments')
@@ -749,6 +827,17 @@ describe('/', () => {
           .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.equal('No article with the id of 999999 found');
+          });
+      });
+      it('POST status 400: returned when invalid username is entered', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({ username: 'not-a-user', body: 'pauls test comment 2' })
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Attempted to insert or update a field that is not present on the linked primary table'
+            );
           });
       });
       it('POST status 422: returned when a valid article_id that is not on the database is entered', () => {
@@ -773,7 +862,7 @@ describe('/', () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Only username and body area acceptable input values'
+              'Only username and body are acceptable input values'
             );
           });
       });
@@ -786,7 +875,7 @@ describe('/', () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Only username and body area acceptable input values'
+              'Only username and body are acceptable input values'
             );
           });
       });
@@ -797,7 +886,7 @@ describe('/', () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Only username and body area acceptable input values'
+              'Only username and body are acceptable input values'
             );
           });
       });
@@ -811,7 +900,7 @@ describe('/', () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Only username and body area acceptable input values'
+              'Only username and body are acceptable input values'
             );
           });
       });

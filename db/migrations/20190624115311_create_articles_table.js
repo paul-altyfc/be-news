@@ -10,8 +10,14 @@ exports.up = function(knex, Promise) {
       .integer('votes')
       .notNullable()
       .defaultTo(0);
-    articlesTable.string('topic').references('topics.slug');
-    articlesTable.string('author').references('users.username');
+    articlesTable
+      .string('topic')
+      .references('topics.slug')
+      .onDelete('CASCADE');
+    articlesTable
+      .string('author')
+      .references('users.username')
+      .onDelete('CASCADE');
     articlesTable.timestamp('created_at').defaultTo(knex.fn.now(6));
   });
 };
