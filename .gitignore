@@ -2,7 +2,7 @@ node_modules
 knexfile.js
 .vscode/
 query.sql
-README.md
+README_project_scope.md
 error-handling.md
 hosting.md
 /db/utils/README.md
