@@ -1,4 +1,3 @@
-// Placeholder
 process.env.NODE_ENV = 'test';
 const app = require('../app.js');
 const request = require('supertest');
@@ -25,7 +24,7 @@ describe('/', () => {
   });
 
   describe('/api', () => {
-    // Test topics endpoints
+    // Test api endpoints
     it('GET status: 404, responds with Not Found when passed a route that does not exist ', () => {
       return request(app)
         .get('/not-a-route')
@@ -79,6 +78,18 @@ describe('/', () => {
           });
       });
       // Error Handling
+      it('POST status 422: attempt to add a new topic with the same primary key as an existing user', () => {
+        return request(app)
+          .post('/api/topics')
+          .send({
+            slug: 'mitch',
+            description: 'http://www.altyfans.co.uk'
+          })
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Key (slug)=(mitch) already exists.');
+          });
+      });
       it('POST status 400: returned with additional fields in the values to be inserted', () => {
         return request(app)
           .post('/api/topics')
@@ -157,6 +168,116 @@ describe('/', () => {
     });
     // Users endpoint tests
     describe('/users - endpoint tests', () => {
+      it('GET status 200, returns an array of the users', () => {
+        return request(app)
+          .get('/api/users')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.users).to.be.an('array');
+            expect(body.users[0]).to.contain.keys(
+              'username',
+              'avatar_url',
+              'name'
+            );
+          });
+      });
+      it('POST status 201: adds a new user', () => {
+        return request(app)
+          .post('/api/users')
+          .send({
+            username: 'sammyd',
+            avatar_url: 'http://www.altyfans.co.uk',
+            name: 'sam_d'
+          })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.user.username).to.equal('sammyd');
+            expect(body.user.avatar_url).to.equal('http://www.altyfans.co.uk');
+            expect(body.user.name).to.equal('sam_d');
+          });
+      });
+      // Error Handling
+      it('GET status: 404, responds with Not Found when passed a route that does not exist ', () => {
+        return request(app)
+          .get('/api/users999')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Not Found');
+          });
+      });
+
+      it('POST status 422: attempt to add a new user with the same primary key as an existing user', () => {
+        return request(app)
+          .post('/api/users')
+          .send({
+            username: 'butter_bridge',
+            avatar_url: 'http://www.altyfans.co.uk',
+            name: 'sam_d'
+          })
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'Key (username)=(butter_bridge) already exists.'
+            );
+            //expect(body.user.avatar_url).to.equal('http://www.altyfans.co.uk');
+            //expect(body.user.name).to.equal('sam_d');
+          });
+      });
+      it('POST status 400: returned with additional fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/users')
+          .send({
+            username: 'sammyd',
+            avatar_url: 'http://www.altyfans.co.uk',
+            name: 'sam_d',
+            invalidfield: 'not allowed'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'You need to provide values for username, avatar_url and name'
+            );
+          });
+      });
+      it('POST status 400: returned with not enough fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/users')
+          .send({
+            username: 'sammyd',
+            avatar_url: 'http://www.altyfans.co.uk'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            console.log(body.msg);
+            expect(body.msg).to.equal(
+              'You need to provide values for username, avatar_url and name'
+            );
+          });
+      });
+      it('POST status 400: returned with no values to be inserted', () => {
+        return request(app)
+          .post('/api/users')
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'You need to provide values for username, avatar_url and name'
+            );
+          });
+      });
+      it('POST status 400: returned with the correct number of fields but wrong keys', () => {
+        return request(app)
+          .post('/api/users')
+          .send({
+            usern: 'sammyd',
+            avatar: 'http://www.altyfans.co.uk',
+            nam: 'sam_d'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Invalid Column specified');
+          });
+      });
       describe('/:username', () => {
         it('GET status: 200, responds with a single user object', () => {
           return request(app)
@@ -189,8 +310,9 @@ describe('/', () => {
               expect(body.msg).to.equal('Not Found');
             });
         });
+
         it('INVALID METHOD status: 405, in /api/users/:username', () => {
-          const invalidMethods = ['patch', 'put', 'post', 'delete'];
+          const invalidMethods = ['patch', 'put', 'delete'];
           const methodsPromise = invalidMethods.map(method => {
             return request(app)
               [method]('/api/users/icellusedkars')
@@ -417,6 +539,27 @@ describe('/', () => {
             expect(body.articles.length).to.equal(10);
           });
       });
+      it('POST status 201: adds a new topic', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({
+            title: 'How to look after cats',
+            body:
+              'this is the first book in a series about how to look after your pet cats',
+            topic: 'cats',
+            author: 'rogersop'
+          })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.article.article_id).to.equal(13);
+            expect(body.article.title).to.equal('How to look after cats');
+            expect(body.article.body).to.equal(
+              'this is the first book in a series about how to look after your pet cats'
+            );
+            expect(body.article.topic).to.equal('cats');
+            expect(body.article.author).to.equal('rogersop');
+          });
+      });
 
       it('DELETE status: 204, removes the article from the database', () => {
         return request(app)
@@ -440,6 +583,89 @@ describe('/', () => {
             expect(body.msg).to.equal('Invalid value entered in URL');
           });
       });
+
+      it('POST status 400: returned with additional fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({
+            title: 'How to look after cats',
+            body:
+              'this is the first book in a series about how to look after your pet cats',
+            topic: 'cats',
+            author: 'rogersop',
+            invalidfield: 'Not valid'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'You need to provide values for title, body, topic and author'
+            );
+          });
+      });
+      it('POST status 400: returned with not enough fields in the values to be inserted', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({
+            body:
+              'this is the first book in a series about how to look after your pet cats',
+            topic: 'cats',
+            author: 'rogersop'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            console.log(body.msg);
+            expect(body.msg).to.equal(
+              'You need to provide values for title, body, topic and author'
+            );
+          });
+      });
+      it('POST status 400: returned with no values to be inserted', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'You need to provide values for title, body, topic and author'
+            );
+          });
+      });
+      it('POST status 400: returned with the correct number of fields but wrong keys', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({
+            title: 'How to look after cats',
+            bodytext:
+              'this is the first book in a series about how to look after your pet cats',
+            topic: 'cats',
+            author: 'rogersop'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal(
+              'The values provided needs to be named title, body, topic and author'
+            );
+          });
+      });
+      it('POST status 400: returned with a non acceptable value in a foreign key field in the values to be inserted', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({
+            title: 'How to look after cats',
+            body:
+              'this is the first book in a series about how to look after your pet cats',
+            topic: 'cat',
+            author: 'rogersop'
+          })
+          .expect(422)
+          .then(({ body }) => {
+            console.log(body.msg, 'body message');
+            expect(body.msg).to.equal(
+              'Key (topic)=(cat) is not present in table "topics".'
+            );
+          });
+      });
+
       it('GET status: 404, responds with a message when an invalid route is passed', () => {
         return request(app)
           .get('/api/articles-not-a-route')
@@ -502,7 +728,7 @@ describe('/', () => {
 
       // Invalid Methods test
       it('INVALID METHOD status: 405, in /api/articles', () => {
-        const invalidMethods = ['patch', 'put', 'post'];
+        const invalidMethods = ['patch', 'put'];
         const methodsPromise = invalidMethods.map(method => {
           return request(app)
             [method]('/api/articles')
@@ -836,7 +1062,7 @@ describe('/', () => {
           .expect(422)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Attempted to insert or update a field that is not present on the linked primary table'
+              'Key (author)=(not-a-user) is not present in table "users".'
             );
           });
       });
@@ -847,7 +1073,7 @@ describe('/', () => {
           .expect(422)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Attempted to insert or update a field that is not present on the linked primary table'
+              'Key (author)=(mitch) is not present in table "users".'
             );
           });
       });

@@ -15,4 +15,16 @@ const selectUserById = ({ username }) => {
     });
 };
 
-module.exports = { selectUserById };
+const selectUsers = () => {
+  return connection.select('*').from('users');
+};
+
+const insertUser = userToAdd => {
+  return connection
+    .insert(userToAdd)
+    .into('users')
+    .returning('*')
+    .then(([user]) => user);
+};
+
+module.exports = { selectUserById, insertUser, selectUsers };

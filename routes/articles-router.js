@@ -3,7 +3,8 @@ const {
   sendArticles,
   sendArticlesById,
   changeArticle,
-  removeArticle
+  removeArticle,
+  addArticle
 } = require('../controllers/articles-controller.js');
 const {
   addComment,
@@ -15,6 +16,7 @@ const { sendMethodNotAllowed } = require('../errors/index.js');
 articlesRouter
   .route('/')
   .get(sendArticles)
+  .post(addArticle)
   .all(sendMethodNotAllowed);
 
 articlesRouter

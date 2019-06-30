@@ -1,5 +1,14 @@
 const connection = require('../db/connection.js');
 
+const insertArticle = articleToAdd => {
+  console.log(articleToAdd);
+  return connection
+    .insert(articleToAdd)
+    .into('articles')
+    .returning('*')
+    .then(([article]) => article);
+};
+
 const selectArticles = (
   { article_id },
   { sort_by = 'created_at', order = 'desc', author, topic, limit = 10, p }
@@ -71,4 +80,9 @@ const deleteArticleById = ({ article_id }) => {
     });
 };
 
-module.exports = { selectArticles, updateArticle, deleteArticleById };
+module.exports = {
+  selectArticles,
+  updateArticle,
+  deleteArticleById,
+  insertArticle
+};

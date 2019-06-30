@@ -1,10 +1,39 @@
 const {
   selectArticles,
   updateArticle,
-  deleteArticleById
+  deleteArticleById,
+  insertArticle
 } = require('../models/articles-model.js');
 
 const connection = require('../db/connection.js');
+
+const addArticle = (req, res, next) => {
+  const reqArr = Object.keys(req.body);
+  const numOfKeys = reqArr.length;
+  if (numOfKeys !== 4) {
+    return Promise.reject({
+      status: 400,
+      msg: 'You need to provide values for title, body, topic and author'
+    }).catch(next);
+  } else if (
+    // check all fields are named correctly if so do the insert
+    (reqArr.includes('title') &&
+      reqArr.includes('body') &&
+      reqArr.includes('topic') &&
+      reqArr.includes('author')) === true
+  ) {
+    insertArticle(req.body)
+      .then(article => {
+        res.status(201).send({ article });
+      })
+      .catch(next);
+  } else {
+    return Promise.reject({
+      status: 400,
+      msg: 'The values provided needs to be named title, body, topic and author'
+    }).catch(next);
+  }
+};
 
 const sendArticles = (req, res, next) => {
   const { author, topic } = req.query;
@@ -99,5 +128,6 @@ module.exports = {
   sendArticles,
   changeArticle,
   sendArticlesById,
-  removeArticle
+  removeArticle,
+  addArticle
 };
