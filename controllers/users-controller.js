@@ -28,12 +28,22 @@ const addUser = (req, res, next) => {
       status: 400,
       msg: `You need to provide values for username, avatar_url and name`
     }).catch(next);
+  } else if (
+    // check all fields are named correctly if so do the insert
+    (reqArr.includes('username') &&
+      reqArr.includes('avatar_url') &&
+      reqArr.includes('name')) === true
+  ) {
+    insertUser(req.body)
+      .then(user => {
+        res.status(201).send({ user });
+      })
+      .catch(next);
+  } else {
+    return Promise.reject({
+      status: 400,
+      msg: 'The values provided need to be named username, avatar_url and name'
+    }).catch(next);
   }
-
-  insertUser(req.body)
-    .then(user => {
-      res.status(201).send({ user });
-    })
-    .catch(next);
 };
 module.exports = { sendUserById, addUser, sendUsers };

@@ -113,7 +113,6 @@ describe('/', () => {
           })
           .expect(400)
           .then(({ body }) => {
-            console.log(body.msg);
             expect(body.msg).to.equal(
               'Only slug and description are acceptable input values'
             );
@@ -140,7 +139,7 @@ describe('/', () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Only slug and description are acceptable input values'
+              'The values provided need to be named slug and description'
             );
           });
       });
@@ -248,7 +247,6 @@ describe('/', () => {
           })
           .expect(400)
           .then(({ body }) => {
-            console.log(body.msg);
             expect(body.msg).to.equal(
               'You need to provide values for username, avatar_url and name'
             );
@@ -275,7 +273,9 @@ describe('/', () => {
           })
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('Invalid Column specified');
+            expect(body.msg).to.equal(
+              'The values provided need to be named username, avatar_url and name'
+            );
           });
       });
       describe('/:username', () => {
@@ -613,7 +613,6 @@ describe('/', () => {
           })
           .expect(400)
           .then(({ body }) => {
-            console.log(body.msg);
             expect(body.msg).to.equal(
               'You need to provide values for title, body, topic and author'
             );
@@ -643,7 +642,7 @@ describe('/', () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'The values provided needs to be named title, body, topic and author'
+              'The values provided need to be named title, body, topic and author'
             );
           });
       });
@@ -659,7 +658,6 @@ describe('/', () => {
           })
           .expect(422)
           .then(({ body }) => {
-            console.log(body.msg, 'body message');
             expect(body.msg).to.equal(
               'Key (topic)=(cat) is not present in table "topics".'
             );
@@ -1126,7 +1124,7 @@ describe('/', () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal(
-              'Only username and body are acceptable input values'
+              'The values provided need to be named username and body'
             );
           });
       });

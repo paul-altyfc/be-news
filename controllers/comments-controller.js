@@ -18,20 +18,26 @@ const addComment = (req, res, next) => {
 
   const reqArr = Object.keys(req.body);
   const numOfKeys = reqArr.length;
-  if (
-    numOfKeys != 2 ||
-    (!reqArr.includes('username') || !reqArr.includes('body'))
-  ) {
+  if (numOfKeys != 2) {
     return Promise.reject({
       status: 400,
       msg: `Only username and body are acceptable input values`
     }).catch(next);
+  } else if (
+    // check all fields are named correctly if so do the insert
+    (reqArr.includes('username') && reqArr.includes('body')) === true
+  ) {
+    insertComment(commentToAdd)
+      .then(comment => {
+        res.status(201).send({ comment });
+      })
+      .catch(next);
+  } else {
+    return Promise.reject({
+      status: 400,
+      msg: 'The values provided need to be named username and body'
+    }).catch(next);
   }
-  insertComment(commentToAdd)
-    .then(comment => {
-      res.status(201).send({ comment });
-    })
-    .catch(next);
 };
 
 const sendCommentsByArticleId = (req, res, next) => {

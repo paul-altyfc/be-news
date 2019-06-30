@@ -30,7 +30,7 @@ const addArticle = (req, res, next) => {
   } else {
     return Promise.reject({
       status: 400,
-      msg: 'The values provided needs to be named title, body, topic and author'
+      msg: 'The values provided need to be named title, body, topic and author'
     }).catch(next);
   }
 };

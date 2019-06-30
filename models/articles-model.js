@@ -1,7 +1,6 @@
 const connection = require('../db/connection.js');
 
 const insertArticle = articleToAdd => {
-  console.log(articleToAdd);
   return connection
     .insert(articleToAdd)
     .into('articles')
