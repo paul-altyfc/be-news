@@ -35,6 +35,38 @@ const addArticle = (req, res, next) => {
   }
 };
 
+// const sendArticles = (req, res, next) => {
+//   const { author, topic } = req.query;
+//   selectArticles(req.params, req.query)
+//     .then(articles => {
+//       const authorExists =
+//         author !== undefined ? checkExists(author, 'users', 'username') : null;
+
+//       const topicExists =
+//         topic !== undefined ? checkExists(topic, 'articles', 'topic') : null;
+
+//       const totalCount = selectTableCount();
+
+//       return Promise.all([authorExists, topicExists, articles, totalCount]);
+//     })
+//     .then(([authorExists, topicExists, articles, totalCount]) => {
+//       // console.log([authorExists, topicExists, articles, totalCount], 'in then');
+//       if (authorExists === false) {
+//         return Promise.reject({ status: 404, msg: 'Author not found' });
+//       } else if (topicExists === false) {
+//         return Promise.reject({ status: 404, msg: 'Topic not found' });
+//       } else {
+//         const articlesObj = {};
+
+//         articlesObj.articles = articles;
+//         retObj = Object.assign(articlesObj, totalCount[0]);
+//         console.log(retObj);
+//         res.status(200).send({ retObj });
+//       }
+//     })
+//     .catch(console.log);
+// };
+
 const sendArticles = (req, res, next) => {
   const { author, topic } = req.query;
   selectArticles(req.params, req.query)
@@ -45,19 +77,26 @@ const sendArticles = (req, res, next) => {
       const topicExists =
         topic !== undefined ? checkExists(topic, 'articles', 'topic') : null;
 
-      return Promise.all([authorExists, topicExists, articles]);
+      const totalCount = selectTableCount();
+
+      return Promise.all([authorExists, topicExists, articles, totalCount]);
     })
-    .then(([authorExists, topicExists, articles]) => {
+    .then(([authorExists, topicExists, articles, totalCount]) => {
+      // console.log([authorExists, topicExists, articles, totalCount], 'in then');
       if (authorExists === false) {
         return Promise.reject({ status: 404, msg: 'Author not found' });
       } else if (topicExists === false) {
         return Promise.reject({ status: 404, msg: 'Topic not found' });
       } else {
-        res.status(200).send({ articles });
+        res.status(200).send({
+          articles,
+          total_count: parseInt(totalCount[0].total_count, 10)
+        });
       }
     })
     .catch(next);
 };
+
 const sendArticlesById = (req, res, next) => {
   const { article_id } = req.params;
   selectArticles(req.params, req.query)
@@ -124,6 +163,33 @@ const checkExists = (value, table, column) => {
     });
 };
 
+const selectTableCount = () => {
+  return connection.select(
+    connection.raw('count(*) as total_count FROM articles')
+  );
+  // .modify(queryBuilder => {
+  //   if (column) {
+  //     queryBuilder.where({ column, value });
+  //   }
+  // });
+
+  // connection
+  //   //.select('*')
+  //   .count(`articles.article_id as total_count`)
+  //   .from('articles')
+  //   // .modify(queryBuilder => {
+  //   //   if (column) {
+  //   //     queryBuilder.where({ column, value });
+  //   //   }
+  //   // })
+  //   .groupBy('articles.articles_id')
+  //   .then(total_count => {
+  //     console.log(total_count, 'in select');
+  //     return total_count;
+  //  })
+  //  .catch(console.log)
+  //);
+};
 module.exports = {
   sendArticles,
   changeArticle,

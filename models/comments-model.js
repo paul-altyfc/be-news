@@ -13,15 +13,17 @@ const selectComments = ({ article_id }, { sort_by, order, limit = 10, p }) => {
   if (isNaN(p) || p === null || p === '') p = 1;
   const offset = (p - 1) * limit;
 
-  return connection
-    .select('*')
-    .from('comments')
-    .where({ article_id })
-    .orderBy(sort_by || 'created_at', order || 'desc')
-    .limit(limit)
-    .offset(offset)
-    .select(connection.raw('count(*) OVER() as total_count'))
-    .then(comments => comments);
+  return (
+    connection
+      .select('*')
+      .from('comments')
+      .where({ article_id })
+      .orderBy(sort_by || 'created_at', order || 'desc')
+      .limit(limit)
+      .offset(offset)
+      // .select(connection.raw('count(*) OVER() as total_count'))
+      .then(comments => comments)
+  );
 };
 
 const deleteCommentById = ({ comment_id }) => {

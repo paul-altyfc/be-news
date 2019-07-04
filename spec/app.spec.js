@@ -334,6 +334,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
+            expect(body.total_count).to.equal(12);
             expect(body.articles[0]).to.contain.keys(
               'article_id',
               'title',
@@ -344,6 +345,15 @@ describe('/', () => {
               'author',
               'comment_count'
             );
+          });
+      });
+      it.only('GET status: 200, adds a total_count key/value pair to the articles object', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            // console.log(body.articles);
+            expect(body.total_count).to.equal(12);
           });
       });
       it('GET status: 200, responds with an array of articles sorted by "created_at" in descending date order', () => {
@@ -753,8 +763,7 @@ describe('/', () => {
               'created_at',
               'votes',
               'author',
-              'comment_count',
-              'total_count'
+              'comment_count'
             );
           });
       });
@@ -867,8 +876,7 @@ describe('/', () => {
               'body',
               'created_at',
               'author',
-              'article_id',
-              'total_count'
+              'article_id'
             );
           });
       });
@@ -892,8 +900,7 @@ describe('/', () => {
               'body',
               'created_at',
               'author',
-              'article_id',
-              'total_count'
+              'article_id'
             );
           });
       });
@@ -909,8 +916,7 @@ describe('/', () => {
               'body',
               'created_at',
               'author',
-              'article_id',
-              'total_count'
+              'article_id'
             );
           });
       });

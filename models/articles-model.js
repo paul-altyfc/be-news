@@ -48,9 +48,8 @@ const selectArticles = (
       .orderBy(sort_by, order)
       .groupBy('articles.article_id')
       .limit(limit)
-      .offset(offset)
-      .select(connection.raw('count(*) OVER() as total_count'))
-      .then(articles => articles);
+      .offset(offset);
+    // .select(connection.raw('count(*) OVER() as total_count')); // look to replace this with a generic function that accepts table and where clause
   }
 };
 
