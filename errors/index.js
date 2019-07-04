@@ -5,6 +5,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
+  // console.log(err);
   const errorCodes = {
     '42703': 'Invalid Column specified',
     '22P02': 'Invalid value entered in URL',

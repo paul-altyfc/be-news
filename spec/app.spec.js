@@ -347,7 +347,7 @@ describe('/', () => {
             );
           });
       });
-      it.only('GET status: 200, adds a total_count key/value pair to the articles object', () => {
+      it('GET status: 200, adds a total_count key/value pair to the articles object', () => {
         return request(app)
           .get('/api/articles')
           .expect(200)
