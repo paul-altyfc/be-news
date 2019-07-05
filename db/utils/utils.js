@@ -28,3 +28,16 @@ exports.formatComments = (comments, articleRef) => {
   });
   return transformedArr;
 };
+
+const connection = require('../connection.js');
+
+exports.selectTableCount = (table, count_column, filter) => {
+  return connection
+    .count(count_column)
+    .from(table)
+    .modify(queryBuilder => {
+      if (filter) {
+        queryBuilder.where(filter);
+      }
+    });
+};

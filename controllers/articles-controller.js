@@ -5,6 +5,8 @@ const {
   insertArticle
 } = require('../models/articles-model.js');
 
+const { selectTableCount } = require('../db/utils/utils.js');
+
 const connection = require('../db/connection.js');
 
 const addArticle = (req, res, next) => {
@@ -150,17 +152,6 @@ const checkExists = (value, table, column) => {
     .where(column, value)
     .then(rows => {
       return rows.length !== 0;
-    });
-};
-
-const selectTableCount = (table, count_column, filter) => {
-  return connection
-    .count(count_column)
-    .from(table)
-    .modify(queryBuilder => {
-      if (filter) {
-        queryBuilder.where(filter);
-      }
     });
 };
 
