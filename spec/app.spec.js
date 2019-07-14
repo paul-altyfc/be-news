@@ -446,7 +446,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(12);
+            expect(body.articles.length).to.equal(10);
           });
       });
       it('GET status 200: responds with all the articles when passed no value as the limit in the query', () => {
@@ -455,7 +455,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(12);
+            expect(body.articles.length).to.equal(10);
           });
       });
       it('GET status 200: responds with all the articles when passed undefined as the limit in the query', () => {
@@ -464,7 +464,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(12);
+            expect(body.articles.length).to.equal(10);
           });
       });
       it('GET status 200: responds with the first 2 articles when passed 2 as the limit in the query', () => {
@@ -482,7 +482,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(12);
+            expect(body.articles.length).to.equal(10);
           });
       });
       it('GET status 200: responds with the first 10 articles when passed no offset query', () => {
@@ -936,7 +936,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(13);
+            expect(body.comments.length).to.equal(10);
           });
       });
       it('GET status 200: responds with all the comments when passed no value as the limit in the query', () => {
@@ -945,7 +945,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(13);
+            expect(body.comments.length).to.equal(10);
           });
       });
       it('GET status 200: responds with all the comments when passed undefined as the limit in the query', () => {
@@ -954,7 +954,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(13);
+            expect(body.comments.length).to.equal(10);
           });
       });
       it('GET status 200: responds with the first 2 comments when passed 2 as the limit in the query', () => {
@@ -972,7 +972,7 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(13);
+            expect(body.comments.length).to.equal(10);
           });
       });
       it('GET status 200: responds with all the comments when passed no offset query', () => {

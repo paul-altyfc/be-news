@@ -9,6 +9,7 @@ const insertComment = commentToAdd => {
 };
 
 const selectComments = ({ article_id }, { sort_by, order, limit = 10, p }) => {
+  if (isNaN(limit) || limit === null || limit === '') limit = 10;
   if (isNaN(p) || p === null || p === '') p = 1;
   const offset = (p - 1) * limit;
 
