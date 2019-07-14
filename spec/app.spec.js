@@ -430,7 +430,7 @@ describe('/', () => {
             expect(areAuthorsSame).to.be.true;
           });
       });
-      // Limit and offset filters
+      // Article Limit and offset filters
       it('GET status 200: responds with the first 10 articles when passed no limit query', () => {
         return request(app)
           .get('/api/articles')
@@ -440,31 +440,31 @@ describe('/', () => {
             expect(body.articles.length).to.equal(10);
           });
       });
-      it('GET status 200: responds with the first 10 articles when passed null as the limit in the query', () => {
+      it('GET status 200: responds with all the articles when passed null as the limit in the query', () => {
         return request(app)
           .get('/api/articles?limit=null')
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(10);
+            expect(body.articles.length).to.equal(12);
           });
       });
-      it('GET status 200: responds with the first 10 articles when passed no value as the limit in the query', () => {
+      it('GET status 200: responds with all the articles when passed no value as the limit in the query', () => {
         return request(app)
           .get('/api/articles?limit=')
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(10);
+            expect(body.articles.length).to.equal(12);
           });
       });
-      it('GET status 200: responds with the first 10 articles when passed undefined as the limit in the query', () => {
+      it('GET status 200: responds with all the articles when passed undefined as the limit in the query', () => {
         return request(app)
           .get('/api/articles?limit=undefined')
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(10);
+            expect(body.articles.length).to.equal(12);
           });
       });
       it('GET status 200: responds with the first 2 articles when passed 2 as the limit in the query', () => {
@@ -476,13 +476,13 @@ describe('/', () => {
             expect(body.articles.length).to.equal(2);
           });
       });
-      it('GET status 200: responds with the default 10 articles when non-numeric value passed as the limit in the query', () => {
+      it('GET status 200: responds with all the articles when non-numeric value passed as the limit in the query', () => {
         return request(app)
           .get('/api/articles?limit="a"')
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.be.an('array');
-            expect(body.articles.length).to.equal(10);
+            expect(body.articles.length).to.equal(12);
           });
       });
       it('GET status 200: responds with the first 10 articles when passed no offset query', () => {
@@ -920,41 +920,41 @@ describe('/', () => {
             );
           });
       });
-      // Limit and offset filters
-      it('GET status 200: responds with the first 10 comments when passed no limit query', () => {
+      // Article Comments Limit and offset filters
+      it('GET status 200: responds with all the comments when passed no limit query', () => {
         return request(app)
-          .get('/api/articles/1/comments')
+          .get('/api/articles/5/comments')
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(10);
+            expect(body.comments.length).to.equal(2);
           });
       });
-      it('GET status 200: responds with the first 10 comments when passed null as the limit in the query', () => {
+      it('GET status 200: responds with with all the comments when passed null as the limit in the query', () => {
         return request(app)
           .get('/api/articles/1/comments?limit=null')
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(10);
+            expect(body.comments.length).to.equal(13);
           });
       });
-      it('GET status 200: responds with the first 10 comments when passed no value as the limit in the query', () => {
+      it('GET status 200: responds with all the comments when passed no value as the limit in the query', () => {
         return request(app)
           .get('/api/articles/1/comments?limit=')
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(10);
+            expect(body.comments.length).to.equal(13);
           });
       });
-      it('GET status 200: responds with the first 10 comments when passed undefined as the limit in the query', () => {
+      it('GET status 200: responds with all the comments when passed undefined as the limit in the query', () => {
         return request(app)
           .get('/api/articles/1/comments?limit=undefined')
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(10);
+            expect(body.comments.length).to.equal(13);
           });
       });
       it('GET status 200: responds with the first 2 comments when passed 2 as the limit in the query', () => {
@@ -966,16 +966,16 @@ describe('/', () => {
             expect(body.comments.length).to.equal(2);
           });
       });
-      it('GET status 200: responds with the default 10 comments when non-numeric value passed as the limit in the query', () => {
+      it('GET status 200: responds with all the comments when non-numeric value passed as the limit in the query', () => {
         return request(app)
           .get('/api/articles/1/comments?limit="a"')
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.be.an('array');
-            expect(body.comments.length).to.equal(10);
+            expect(body.comments.length).to.equal(13);
           });
       });
-      it('GET status 200: responds with the first 10 comments when passed no offset query', () => {
+      it('GET status 200: responds with all the comments when passed no offset query', () => {
         return request(app)
           .get('/api/articles/1/comments')
           .expect(200)
