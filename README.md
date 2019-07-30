@@ -1,9 +1,11 @@
 # News API
 
-The application allows you to create, update, amend and delete news articles. The main aspects of the solution are:
+This application provides a series of endpoints that are utilised by the deployed Front End and allows users to create, update, amend and delete news articles. 
 
-- users - only registered users can create articles and comments
-- topics
+The main aspects of the solution are:
+
+- users - registered users can create articles and comments
+- topics - a number of topic areas that have articles in the database
 - articles - are associated with topics that exist in the application
 - comments - can be written about articles
 
@@ -13,17 +15,7 @@ Users can add votes to articles and comments
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
-
-This section provides details of the javascript components that need to be installed and how they can be installed.
-
-**Please clone this repository but do not fork it**
-
 The application uses a PostGres (PSQL) database and uses Knex to interact with it
-
-```
-[Knex](https://knexjs.org)
-```
 
 The source code is stored in a Github Repository. Please refer to the Github documentation is you need any help in setting up a new repository
 
@@ -32,97 +24,139 @@ The source code is stored in a Github Repository. Please refer to the Github doc
 [News API Project Github](https://github.com/paul-altyfc/be-news)
 ```
 
-**Please clone this repository but do not fork it**
+**Please clone this repository but DO NOT fork it**
 
-### Installing
+### Installing and Running in local development environment
 
-Step by step instructions to get a development env running
+## 1. Set up the Backend Repository
 
-## Step 1 - Setting up the Repository
+Create a parent directory on your local machine that will hold the application. In a terminal window cd <new directory>
 
-Your first task is set up your own portfolio repository. Once you have cloned this repo, on github create your own **public** repo for your review. **Make sure NOT to initialise it with a README or .gitignore.**
-
-Next, you should hook your cloned version to the newly created repo using the following terminal commands.
+In the new directory run 
 
 ```console
-cd be-news)
+git clone https://github.com/paul-altyfc/be-news.git
+cd be-news
 ```
 
-```js
+Create your own **public** repository on Github. **Make sure NOT to initialise it with a README or .gitignore.**
+
+Now hook up your cloned version to the newly created repo using the following terminal commands.
+
+```console
 git remote -v
 
-// This should display a url to the News API repo
+// This will display a urls to the original repo 
+origin	https://github.com/paul-altyfc/be-news.git (fetch)
+origin	https://github.com/paul-altyfc/be-news.git (push)
 ```
 
-```js
+```console
 git remote remove origin
 
-// This will remove your cloned version from pushing to the original repository
+// This will prevent your cloned version from pushing to the original repository
 ```
 
-```js
+```console
 git remote -v
 
 // This should now show nothing
 ```
 
-```js
+```console
 git remote add origin <YOUR-GITHUB-URL>
 
 // This will add your github location to your local git repository
 ```
 
-```js
+```console
 git remote -v
-
-// This should now show your repo url and you are good to go...
 ```
 
-## Step 2 - Setting up your project
+### Prerequisites
 
-The repo provided you with the knexfile. Make sure to add it to the `.gitignore` once you start pushing to your own repository. If you are on linux insert your postgres username and password into the knexfile.
+This section provides details of the javascript components that need to be installed and how they can be installed.
 
-You have also been provided with a `db` folder with some data, a [setup.sql](./db/setup.sql) file, a `seeds` folder and a `utils` folder. You should take a minute to familiarise yourself with the npm scripts you have been provided.
+Installing Dependencies
 
-The files in the seeds, migration and utils directory are used to create development and test databases that are used by the application
+Once you have cloned the repo navigate to the root of the project and run the following command to install the dependencies listed in the package.json:
 
-## Step 3 - Database Tables
+```bash
+npm install
+```
+This installs the following dependencies with the currently deployed versions:
 
-The application has separate tables for `topics`, `articles`, `users` and `comments`.
+```package.json
+   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "knex": "^0.17.6",
+    "pg": "^7.11.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-sorted": "^0.2.0",
+    "mocha": "^6.2.0",
+    "supertest": "^4.0.2"
+  }
+```
+## 2. Setting up your project
 
-Each topic has:
+You will need to create a **knexfile.js** that hold database connection information in the root folder
 
-- `slug` field which is a unique string that acts as the table's primary key
-- `description` field which is a string giving a brief description of a given topic
+```js
+const { DB_URL } = process.env;
 
-Each user has:
+const ENV = process.env.NODE_ENV || 'development';
 
-- `username` which is the primary key & unique
-- `avatar_url`
-- `name`
+const baseConfig = {
+  client: 'pg',
+  migrations: {
+    directory: './db/migrations'
+  },
+  seeds: {
+    directory: './db/seeds'
+  }
+};
 
-Each article has:
+const customConfig = {
+  development: {
+    connection: {
+      database: 'nc_news',
+      user: <your postgres user>,
+      password: <your postgres password>
+    }
+  },
+  test: {
+    connection: {
+      database: 'nc_news_test',
+      user: <your postgres user>,
+      password: <your postgres password>
+    }
+  },
+  production: {
+    connection: `${DB_URL}?ssl=true`
+  }
+};
 
-- `article_id` which is the primary key
-- `title`
-- `body`
-- `votes` defaults to 0
-- `topic` field which references the slug in the topics table
-- `author` field that references a user's primary key (username)
-- `created_at` defaults to the current timestamp
+module.exports = { ...customConfig[ENV], ...baseConfig };
+```
 
-Each comment has:
+**If you are on linux insert your postgres username and password into the knexfile.**
 
-- `comment_id` which is the primary key
-- `author` field that references a user's primary key (username)
-- `article_id` field that references an article's primary key
-- `votes` defaults to 0
-- `created_at` defaults to the current timestamp
-- `body`
+The `db` folder and it's sub folders holds the files used to create the database and populate it with some test data.  The files in the seeds, migration and utils directory are used to create development and test databases that are used by the application
 
-## Step 4 - Endpoint routes
+## 3. Creating the database
 
-## The application has the following endpoints
+PostgreSQL needs to be installed and configured before the database can be created and populated by running 
+
+```console
+npm run setup-dbs
+npm run seed
+```
+## 4. RESTful API Endpoint routes exposed by teh application
+
+## The application provides the following endpoints
 
 ```http
 GET /api
@@ -149,13 +183,11 @@ PATCH /api/comments/:comment_id
 DELETE /api/comments/:comment_id
 ```
 
----
-
 ### Route Requirements
 
 _**All of your endpoints send the below responses in an object, with a key name of what it is that is being sent. E.g.**_
 
-```json
+```
 {
   "topics": [
     {
@@ -173,42 +205,43 @@ _**All of your endpoints send the below responses in an object, with a key name 
   ]
 }
 ```
+It is possible to see all the users in the system by accessing this url https://article-reviews.herokuapp.com/api/users
 
-End with an example of getting some data out of the system or using it for a little demo
+## Testing the system
 
-## Running the tests
+The application was created following a Test Driven Development (TDD) methodology. The test files are held in the spec folder and are split into separate files for the main application (app.spec.js) and utilities (utils.spec.js).
 
-Explain how to run the automated tests for this system
+The automated application tests can be ran with the following commands 
+```console
+npm test
+```
+To test the utility functions execute
+```console
+npm run test-utils
+```
+### Testing Approach
 
-### Break down into end to end tests
-
-Explain what these tests test and why
+The tests are broken down by endpoints to allow automated unit, integration and system testing to be performed on the application.
 
 ```
-Give an example
+An example is the testing of articles which is broken down into separate tests for
+
+/articles
+/articles/:article_id
+/articles/:article_id/comments
 ```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+The application was deployed using [Heroku](https://www.heroku.com/) 
 
 ## Built With
 
-- [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-- [Maven](https://maven.apache.org/) - Dependency Management
-- [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+- [Express.js](https://expressjs.com/) - The web framework used
+- [Knex.js](http://knexjs.org/) - SQL Query Buildeer 
+- [Mocha](https://mochajs.org/) - Testing framework
+- [Chai](https://www.chaijs.com/) - TDD assertion library
 
-## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
