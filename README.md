@@ -19,10 +19,10 @@ The application uses a PostGres (PSQL) database and uses Knex to interact with i
 
 The source code is stored in a Github Repository. Please refer to the Github documentation is you need any help in setting up a new repository
 
-```
+
 [Github documentation](https://help.github.com/en#dotcom)
 [News API Project Github](https://github.com/paul-altyfc/be-news)
-```
+
 
 **Please clone this repository but DO NOT fork it**
 
